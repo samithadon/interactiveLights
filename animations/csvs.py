@@ -30,10 +30,10 @@ def make_csvs(dirname, debug):
                 if r == 255 and g == 255 and b == 255:
                     coords.append([x,y,1])
                 elif r == 0 and g == 0 and b == 0:
-                    coords.append([x,y,0])
+                    # no need to record unlit pixels
+                    pass
                 else:
                     print 'warning: found a pixel that is neither black or white', 'r', r, 'g', g, 'b', b, 'a', a
-                    coords.append([x,y,0])
                     
                 if debug:
                     drawpix[x,y] = (255, 0, 0, 255)
