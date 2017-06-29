@@ -1,0 +1,46 @@
+extends layout
+
+block content
+  script.
+    var nZClient = #{nZClient};
+  script(src="/javascripts/index.js")
+  script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true")
+  //- script(src="/javascripts/fpsmeter.min.js")
+
+  #intro
+    #intro_box
+      .title
+      .msg
+        p.text
+        #intronext.introbtn
+    .extras
+
+
+  #sgmap
+    #pccontainer
+      #mapbox
+        img#mainmap(src= "/images/map.png")
+        #locmarker.hidden
+      #pcodein
+        p Enter your address / postal code
+        input#zipcode(type=text)
+        button#zipcodebtn Send
+      #bdmessage.hidden
+        p#usr_addr.g_addrs You are from :
+        p Enter your birthday message
+        textarea#bdmsg
+        button#bdmsgbtn Send
+      #bdreply.hidden
+        p#pbdrply Text
+  //- #gamebuttons.region
+  //-   .regionfixw Test text
+  //- #logos.region
+  //-   .regionfixw
+  //-     //- .logobox
+  //-     .logobox
+  //-       p Happy Birthday!
+  //-     .logobox
+  //-       img(src= "/images/sutdlogo.png")
+      //- .logobox
+      //-   img(src= "/images/luxlogo.jpg")
+      //- .logobox

@@ -1,0 +1,276 @@
+// html
+//   webkit-text-size-adjust none
+
+// /* muted black background color */
+// body
+//   background-color: hsl(0, 0%, 9%)
+
+// /* exact center */
+// .ui_titleBox, .ui_keyPad, .ui_fiftyLogo {
+//   position: fixed;
+//   top: 49%; left: 50%;
+//   transform: translate(-50%, -50%);
+//   -moz-transform: translate(-50%, -50%);
+//   -webkit-transform: translate(-50%, -50%);
+// }
+// /* logo */
+// .ui_fiftyLogo {
+//   z-index: -1;
+// }
+@import 'nib'
+
+#ui_logo {
+  text-align: center; top: 40%;
+  font: 500%/135% sans-serif;
+  color: hsl(0, 0%, 7%);
+  -moz-transform: scale(1.75,2.5);
+  -webkit-transform: scale(1.75,2.5); /* Safari */
+  transform: scale(1.75,2.5);
+}
+/* intro flickering colors */
+.ui_sg50 {
+  text-align: center;
+  font: 350% sans-serif;
+  margin: 0; line-height: 225%;
+  -ms-transform: scale(1.75,2.5); /* IE 9 */
+  -webkit-transform: scale(1.75,2.5); /* Safari */
+  transform: scale(1.75,2.5);
+}
+#ui_projectName {
+  margin-top: 0;
+  text-align: center;
+  font: 200% 'Dancing Script', cursive;
+  color: #C0C0C0;
+  -ms-transform: scale(1.6,1.5); /* IE 9 */
+  -webkit-transform: scale(1.6,1.5); /* Safari */
+  transform: scale(1.6,1.5);
+}
+/* Animation */
+@keyframes ui_sAnimated {
+  0%   {color: #7CFC00;}
+  16%  {color: #FF1493;}
+  32%  {color: #00BFFF;}
+  48%  {color: #FF3300;}
+  64%  {color: #DA70D6;}
+  80% {color: #FFD700;}
+  100% {color: #7CFC00;}
+}
+
+#ui_s {
+  animation-name ui_sAnimated
+  animation-duration 5s
+}
+
+@keyframes ui_gAnimated {
+  0%   {color: #00BFFF;}
+  16%  {color: #FFD700;}
+  32%  {color: #7CFC00;}
+  48%  {color: #FF1493;}
+  64%  {color: #9900CC;}
+  80% {color: #FF0000;}
+  100% {color: #00BFFF;}
+}
+
+#ui_g {
+  animation-name: ui_gAnimated;
+  animation-duration: 5s;
+}
+@keyframes ui_fiveAnimated {
+  0%   {color: #FF1493;}
+  16%  {color: hsl(0, 100%, 50%);;}
+  32%  {color: #DA70D6;}
+  48%  {color: #7CFC00;}
+  64%  {color: #FF0033;}
+  80% {color: #FFFFCC;}
+  100%   {color: #FF1493;}
+}
+
+#ui_five {
+  animation-name: ui_fiveAnimated;
+  animation-duration: 5s;
+}
+@keyframes ui_zeroAnimated {
+  0%   {color: #FFD700;}
+  16%   {color: #000099;}
+  32%  {color: #FF1493;}
+  48%  {color: #00BFFF;}
+  64%  {color: #7CFC00;}
+  80% {color: #000033;}
+  100%   {color: #FFD700;}
+}
+
+
+@keyframes ui_bgtestAnimated {
+  0%   {background-color: #FFD700;}
+  16%   {background-color: #000099;}
+  32%  {background-color: #FF1493;}
+  48%  {background-color: #00BFFF;}
+  64%  {background-color: #7CFC00;}
+  80% {background-color: #000033;}
+  100%   {background-color: #FFD700;}
+}
+
+#ui_zero {
+  animation-name: ui_zeroAnimated;
+  animation-duration: 5s;
+}
+
+vertical-align-middle()
+  position: relative
+  top: 40%
+  -webkit-transform: translateY(-50%)
+  -ms-transform: translateY(-50%)
+  transform: translateY(-50%)
+
+h-trasform(n)
+  position: relative
+  -webkit-transform: translateX(n)
+  -ms-transform: translateX(n)
+  transform: translateX(n)
+
+html, body
+  height 100%
+  // animation-name ui_bgtestAnimated
+  // animation-duration 5s
+  // animation-iteration-count: infinite;
+  // animation-delay: 2s
+  // animation-direction: alternate;
+
+body
+  background-color: hsl(0, 0%, 9%)
+
+.ui_inline_b
+  display inline-block
+
+#ui_keypad_container
+  max-width 50em
+  height 100%
+  margin 0 auto
+  text-align center
+  .ui_key_wrap
+    display inline-block
+    vertical-align-middle()
+    top 50%
+    .ui_titleBox, .ui_keyPad
+      margin 0 auto
+    .ui_keyPad
+      display none
+      .btn_heading
+        font lighter 150% sans-serif
+        // font-size 1.4em
+        text-align center
+        color #C0C0C0
+        margin-bottom 1em
+      #ui_heading
+        letter-spacing .2em
+
+      .ui_btn_row
+        margin 0 auto
+        .ui_num
+          padding .75em .55em
+          .ui_numpadbtn
+            width 2.6em
+            height 2.6em
+            border 1px solid #C0C0C0
+            border-radius 50%
+            background none
+            font-size 1.5em
+            color #C0C0C0
+          .ui_blueClicked
+            border-color: #00FFFF; color: #00FFFF;
+          .ui_greenClicked
+            border-color: #00FF00; color: #00FF00;
+          .ui_pinkClicked
+            border-color: #FF1493; color: #FF1493;
+          .ui_goldClicked
+            border-color: #FFFF00; color: #FFFF00;
+          .ui_orangeClicked
+            border-color: #FF6347; color: #FF6347;
+
+
+// Results of geo location
+#ui_result_container
+  width 100%
+  // margin-top 10%
+  height 100%
+  #ui_map_container
+    max-width 600px
+    margin 1% auto
+    .ui_mapBox
+      margin 1% 0
+      #ui_mapSG
+        width 100%
+  #ui_send_msg
+    .ui_msg
+      max-width 600px
+      margin 2% auto
+      textarea
+        border solid 1px #C0C0C0
+        border-radius 0.5em
+        display block
+        margin 0 auto
+        background-color: hsl(0, 0%, 9%)
+        outline none
+        resize none
+        overflow auto
+        font-size 14px
+        color #EEE
+        padding 1em
+      #btnSendMsg
+        display block
+        margin 0 auto
+        color #DDD
+        background none
+        border 1px solid #ddd
+        border-radius 1em
+        line-height 2em
+        font-size 1.2em
+        padding 0.5em 1em
+        outline none
+        text-align center
+        &:hover
+          background-color #333
+  #ui_stats
+    .ui_indicators
+      width 80%
+      margin 1em auto
+      .ui_g
+        #ui_rB
+          h-trasform(-50%)
+          left 12%
+        .ui_tB
+          h-trasform(-130%)
+          left 100%
+      .ui_bar
+        border 1px solid grey
+        // height 0.5em
+        border-radius 0.3em
+        #ui_bar_fill
+          width 12%
+          background-color red
+          height 0.3em
+          border-radius 0.1em
+      .ui_numbers
+        #ui_data
+          h-trasform(-50%)
+          left 12%
+        #ui_dataT
+          h-trasform(-130%)
+          left 100%
+  .ui_stat_msg
+    width 80%
+    max-width 600px
+    margin 2% auto
+    .stat
+      color #aaa
+      text-align center
+      margin 2% auto
+      .stat_highlight
+        color #FFF
+    .thanks
+      font-size 2em
+    // .ui_btns
+    //   width 33%
+    //   text-align center
+    //   input
+    //     max-width 50px

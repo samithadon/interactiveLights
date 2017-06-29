@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h1.
+    title
+  ul
+    each author, i in authors
+      li
+        a(href="mailto:#{author.email}")= author.name

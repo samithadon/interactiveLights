@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  script.
+    var nZClient = #{nZClient};
+  script(src="/javascripts/threejs/three.js")
+  script(src="/javascripts/threejs/js/controls/TrackballControls.js")
+  //- script(src="/javascripts/threejs/js/controls/TrackballControls.js")
+  script(src="/javascripts/server.js")
+  script(src="/javascripts/led.js")
+  //- script(src="/javascripts/fpsmeter.min.js")
+
+  //- #intro
+  //-   #intro_box
+  //-     .title
+  //-     .msg
+  //-       p.text
+  //-       #intronext.introbtn
+  //-   .extras
+
+
+  .vis_container
+    #title_box
+      h1 Go to Sonic.SG
+    #renderthree
+  //- #gamebuttons.region
+  //-   .regionfixw Test text
+  //- #logos.region
+  //-   .regionfixw
+  //-     //- .logobox
+  //-     .logobox
+  //-       p Happy Birthday!
+  //-     .logobox
+  //-       img(src= "/images/sutdlogo.png")
+      //- .logobox
+      //-   img(src= "/images/luxlogo.jpg")
+      //- .logobox

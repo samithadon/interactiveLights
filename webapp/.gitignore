@@ -1,0 +1,6 @@
+node_modules
+testapp/data/*
+chatapp/data/*
+chatapp/node_modules/*
+data
+SG50Web.sublime-workspace

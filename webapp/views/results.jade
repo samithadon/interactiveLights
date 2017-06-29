@@ -1,0 +1,54 @@
+extends layout
+
+block content
+	script.
+		var nZClient = #{nZClient};
+	script(src="/javascripts/index.js")
+	script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true")
+	//- head
+		//- <link href='http://fonts.googleapis.com/css?family=Dancing+Script' rel='stylesheet' type='text/css'>
+		//- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		//- <script type="text/javascript" src="javascripts/final.js"></script>
+		//- <script type="text/javascript" src="javascripts/UIinclude.js"></script>
+		//- <script type="text/javascript" src="jquery.sparkline.js"></script>
+		//- <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+
+	.ui_mapBox3
+		img#ui_mapS2(src="/images/ui/map.png")
+		.ui_numbers
+			p#ui_data 12
+			p#ui_dataT 100
+		.ui_g
+			.ui_rB
+				img#ui_local(src="/images/ui/local.png")
+			.ui_tB
+				img#ui_flag(src="/images/ui/total.png")
+	.ui_cardBack
+		&nbsp
+	.ui_card
+		p#ui_one Happy <br> Birthday!
+		p#ui_two Thanks for the <br> good food!
+		p#ui_three Happy 50th!
+		img(src="/images/ui/balloon.png" id="ui_balloon")
+		img(src="/images/ui/crab_filled.png" id="ui_crab")
+		img#ui_tape2(src="/images/ui/tape.png")
+		button(type="button" id="ui_x") X
+		form#ui_messageArea
+			textarea(id="ui_bDW2" rows="7" placeholder="your birthday message here")
+			input(type="image" src="/images/ui/submit.png" id="ui_sendB")
+
+	ul.ui_uibuttons
+		li
+			//- input(type="image" id="ui_bDay" src="https://40.media.tumblr.com/40a05d82257c1d4b1c43ec179f1c410c/tumblr_nsk6w1pXZs1uzlx1wo1_540.png")
+			input(type="image" id="ui_bDay" src="/images/ui/birthday_message.png")
+		li
+			input(type="image" id="ui_home" src="/images/ui/home.png")
+		li
+			input(type="image" id="ui_about" src="/images/ui/about.png")
+
+
+	.ui_fiftyLogo
+			p#ui_logo SG
+			p#ui_logo 50
+
+

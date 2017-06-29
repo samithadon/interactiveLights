@@ -1,0 +1,45 @@
+html, body {
+	padding: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+
+}
+
+
+h2 {
+	background-color: #606099;
+	color: #FFFFFF;
+	text-indent:20px;
+	border-radius: 20px;
+	text-align: center;
+}
+
+.redbox {
+
+	border-style: solid;
+	border-color: maroon;
+	text-align: center;
+	vertical-align: middle;
+	border-radius: 20px;
+	color: #000000;
+	padding: 20px;
+
+}
+
+.photocredit {
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+    font-weight: 300;
+    font-size: 60%;
+
+}
+
+.footer {  /* select all header and footer elements */
+   display: block;
+   margin: 4px;
+   padding: 5px;
+   min-height: 10%;
+   border: 1px solid black;
+   border-radius: 7pt;
+   background: #9090CC;
+   font-size: 80%;
+
+ }

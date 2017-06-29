@@ -1,0 +1,65 @@
+
+extends layout
+
+block content
+	script.
+		var nZClient = #{nZClient};
+	//- script(src="/javascripts/amdrequire.js")
+	script(src="/javascripts/index.js")
+	script(src="/javascripts/require.js")
+	script(src="/javascripts/sounds/sndmain.js")
+	//- script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true")
+	#ui_keypad_container
+		.ui_key_wrap
+			.ui_titleBox
+				p.ui_sg50 <span id="ui_s">S<span id="ui_g">G
+				p.ui_sg50 <span id="ui_five">5<span id="ui_zero">0</span>
+				p#ui_projectName sonic sg
+			.ui_keyPad.hidden
+				<p class="btn_heading" >Welcome to SonicSG!</p>
+				<p class="btn_heading" id="ui_heading" >Enter Postal Code</p>
+				.ui_btn_row
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_blue" type="submit" value="1">1
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_green" type="submit" value="2">2
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_pink" type="submit" value='3'>3
+				.ui_btn_row
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_gold" type="submit" value='4'>4
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_blue" type="submit" value='5'>5
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_green" type="submit" value='6'>6
+				.ui_btn_row
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_pink" type="submit" value='7'>7
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_orange" type="submit" value='8'>8
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_blue" type="submit" value='9'>9
+				.ui_btn_row
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_green" type="submit" value='X'>X
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_gold" type="submit" value='0'>0
+					.ui_num.ui_inline_b <button class="ui_numpadbtn ui_pink" type="submit" value='<-'><-
+
+	#ui_result_container.hidden
+		#ui_map_container
+			.ui_mapBox
+				object#ui_mapSG(type="image/svg+xml",data="/images/map.svg", onload="document.startSVG();").
+					Your browser doesn't support SVG
+		#ui_send_msg
+			.ui_msg
+				textarea.bd_msg#txt_bd_msg(rows="4" cols="35" placeholder="Share a holiday wish or thought!")
+			.ui_msg
+				button#btnSendMsg Send
+		#ui_wait_stats.hidden
+			.ui_stat_msg
+				p.stat Please wait while we process your message!
+		#ui_stats.hidden
+			.ui_indicators
+				.ui_g
+					#ui_rB.ui_inline_b
+						img#ui_local(src="/images/ui/local.png")
+					.ui_tB.ui_inline_b
+						img#ui_flag(src="/images/ui/total.png")
+				.ui_bar
+					#ui_bar_fill
+				.ui_numbers
+					p#ui_data.ui_inline_b 0
+					p#ui_dataT.ui_inline_b 12524
+			.ui_stat_msg
+				p.stat #[span.stat_highlight Thank you], your message has been received!
+				p.stat SonicSG has received a total of #[span#t_count.stat_highlight 0] messages from all around Singapore and #[span#d_count.stat_highlight 20] messages from your district.

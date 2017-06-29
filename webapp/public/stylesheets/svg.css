@@ -1,0 +1,11 @@
+svg {
+  width: 100%;
+}
+svg g path,
+svg g polygon {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 0.2;
+  stroke-linecap: round;
+  troke-linejoin: round;
+}

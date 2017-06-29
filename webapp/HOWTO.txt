@@ -1,0 +1,40 @@
+HOWTO
+
+How to grab the repository to create a local one:
+git clone git@sonic.sg:sonic.git
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+How to stop/pull/restart the server on sonic.sg:
+
+First stop the server:
+sudo /etc/init.d/sg50node stop
+
+Then goto web folder:
+cd /var/www/s50/sonicsg
+
+Pull the changes you just pushed.
+git pull origin public
+
+If you added new npm modules, do an npm install as well.
+If everything goes well, you should be able to start the server like this back again.
+sudo /etc/init.d/sg50node start
+
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+How to start loally:
+
+Start the mongod first (replace the path):
+mongod --dbpath /srv/mongodb/
+
+cd to the project root folder
+
+install dependaencies:
+npm install
+
+start the server:
+npm start
+
+Then you should be able to access it in url:
+localhost:3000

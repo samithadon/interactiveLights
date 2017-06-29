@@ -1,0 +1,308 @@
+@keyframes btnhighlightanim {
+  from {
+    // border:2px solid white
+    -webkit-transform: scale(1,1)
+    transform scale(1,1)
+  }
+  to {
+    // border:5px solid white
+    -webkit-transform: scale(0.5,0.5)
+    transform scale(0.5,0.5)
+  }
+}
+
+@keyframes btndraganimleft {
+  from {
+    // border:2px solid white
+    // transform scale(1,1)
+    -ms-transform: translate(0px,0px); /* IE 9 */
+    -webkit-transform: translate(0px,0px); /* Chrome, Safari, Opera */
+    transform: translate(0px,0px);
+    opacity 1;
+  }
+  to {
+    // border:5px solid white
+    // transform scale(0.5,0.5)
+    -ms-transform: translate(50px,-200px); /* IE 9 */
+    -webkit-transform: translate(50px,-200px); /* Chrome, Safari, Opera */
+    transform: translate(50px,-200px);
+    opacity 0;
+  }
+}
+
+@keyframes btndraganimright {
+  from {
+    // border:2px solid white
+    // transform scale(1,1)
+    -ms-transform: translate(0px,0px); /* IE 9 */
+    -webkit-transform: translate(0px,0px); /* Chrome, Safari, Opera */
+    transform: translate(0px,0px);
+    opacity 1;
+  }
+  to {
+    // border:5px solid white
+    // transform scale(0.5,0.5)
+    -ms-transform: translate(-50px,-200px); /* IE 9 */
+    -webkit-transform: translate(-50px,-200px); /* Chrome, Safari, Opera */
+    transform: translate(-50px,-200px);
+    opacity 0;
+  }
+}
+
+*
+  margin 0
+  padding 0
+  box-sizing border-box
+
+body
+  // padding: 50px
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+  margin 0
+  padding 0
+  box-sizing border-box
+  background-color #000000
+  color #fff
+a
+  color: #00B7FF
+
+.region
+  // border 1px solid blue
+  width 100%
+  position:absolute
+
+#rendermain
+  height 95%
+  top 0
+
+#sgmap
+  margin 0 auto
+  width 100%
+  max-width 960px
+  #mainmap
+    width 100%
+
+.vis_container
+  border 1px solid white
+  margin 1em auto
+  width 1020px
+  #title_box
+    margin 0.5em
+    h1
+      text-align center
+  #renderthree
+    margin 0 auto
+    // width 100%
+    width 1002px
+    height 582px
+
+#gamebuttons
+  height 10%
+  top 85%
+  color white
+  text-align center
+
+#logos
+  text-align center
+  // vertical-align middle
+  height 3%
+  top 96%
+
+.gameBtn
+  // padding 0.2em 1em
+  margin 0 auto
+  font-size 2vh
+  display inline-block
+  width 8vh
+  height 8vh
+  // color white
+  // background-color #FFFFFF
+  border: 0
+  // border 5px solid #FFFFFF
+  border-radius 4vh
+  outline none
+
+
+.gameBtnOuter
+  display inline-block
+  width 50%
+  margin 0
+  vertical-align middle
+
+.gameBtnRed
+  // border-color #FF0000
+  background-color #FF0000
+  color #FF0000
+
+.gameBtnBlue
+  // border-color #FF00FF
+  background-color #0000FF
+  color #0000FF
+
+.gameBtnGreen
+  // border-color #00FF00
+  background-color #00FF00
+  color #00FF00
+
+.gameBtnClicked
+  // border-color #FFFFFF
+  color grey
+  box-shadow:0px 0px 2rem #fff;
+
+.region .regionfixw
+  margin: 0 auto;
+
+.region .logobox
+  width 49%
+  height 100%
+  // position relative
+  display inline-block
+  vertical-align middle
+  // border 1px solid white
+
+.region .logobox img
+  // vertical-align middle
+  // height 100%;
+  max-height: 100%;
+  max-width: 100%;
+
+.region .logobox p
+  display inline-block
+  height 100%;
+  color white
+  font-size 2vh
+  max-height: 100%;
+  max-width: 100%;
+
+
+// Testing for postal code
+#pccontainer
+  width 100%
+  max-width 400px
+  margin 2em auto
+  text-align center
+  #mapbox
+    position relative
+    #locmarker
+      width 1em
+      height 1em
+      position absolute
+      top 0
+      left 0
+      background-color red
+  #pcodein
+    #zipcode
+      width 40%
+      margin 1% 1%
+    #zipcodebtn
+      width 40%
+      margin 1% 1%
+  #bdmessage
+    p.g_addrs
+      color yellow
+    #bdmsg
+      width 100%
+      margin 1% 1%
+      display block
+    #bdmsgbtn
+      width 40%
+      margin 1% 1%
+  #bdreply
+    p
+      color red
+
+.hidden
+  display none
+  // visibility hidden
+// Testing for postal code
+
+
+
+#intro
+  display none
+  position absolute
+  top 0
+  left 10%
+  z-index 10000
+  width 80%
+  height 95%
+  padding-top 2%
+  border 1px solid white
+  border-radius 3%
+  background-color rgba(200,200,200,0.2)
+
+  .title
+    width 90%
+    padding 1%
+    color black
+    margin auto
+    text-align center
+    border-top-left-radius 2vh
+    border-top-right-radius 2vh
+    font-size 4vh
+    font-weight bold
+
+    background-color rgba(255,255,255, 1)
+
+  .msg
+    width 90%
+    height 100%
+    padding 3%
+    margin auto
+    border 1px white solid
+    border-bottom-left-radius 10%
+    border-bottom-right-radius 10%
+    p.text
+      font-size 3vh
+      color white
+      text-align left
+
+    .introbtn
+      margin 2vh auto
+      height 7vh
+      border 2px solid white
+      color white
+      text-align center
+      // vertical-align middle
+      background-color rgba(0,0,0, 1)
+      font-size 4vh
+      line-height 6vh
+      width 80%
+      border-radius 10% / 50% ;
+      // border: 2px solid #a1a1a1;
+      // padding: 10px 40px;
+      // background: #dddddd;
+      // width: 300px;
+      // border-radius: 25px;
+
+  .extras
+    .btnhighlight
+      border 3px white solid
+      position absolute
+      border-radius 50%
+      -webkit-animation: btnhighlightanim 1s linear 0 infinite alternate; /* Chrome, Safari, Opera */
+      animation: btnhighlightanim 1s linear 0 infinite alternate;
+
+    .btnperchighlight
+      border 3px white solid
+      position absolute
+      border-radius 20%
+      -webkit-animation: btnhighlightanim 1s linear 0 infinite alternate; /* Chrome, Safari, Opera */
+      animation: btnhighlightanim 1s linear 0 infinite alternate;
+
+    .btnaction
+      // border 3px white solid
+      position absolute
+      border-radius 50%
+      // animation btnhighlightanim 2s
+
+      // width 8vh linear 0 infinite alternate
+      // height 8vh
+    .btntype0
+      background radial-gradient(#00FFFF, #3000A8, #540029);
+      -webkit-animation: btndraganimleft 2s linear 0 infinite normal; /* Chrome, Safari, Opera */
+      animation: btndraganimleft 2s linear 0 infinite normal;
+    .btntype1
+      background radial-gradient(#FFBF00, #00A806, #003E54);
+      -webkit-animation: btndraganimright 2s linear 1s infinite normal; /* Chrome, Safari, Opera */
+      animation: btndraganimright 2s linear 1s infinite normal;
+

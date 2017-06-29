@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+// Init chat app
+var debug = require('debug')('chatapp');
+// Require basi app settings
+var app = require('../app');
+
+// Initialize port
+var server = app.listen(app.get('port'), function() {
+  debug('Express server listening on port ' + server.address().port);
+});
+
+sg50_serverNotConnected = true;
+
+// Socket IO
+var io = require('socket.io')(server);
+
+var SIOManager = new require('../socket/siomanager');
+var siom = new SIOManager(io);
