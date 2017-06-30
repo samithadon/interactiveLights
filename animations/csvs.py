@@ -17,7 +17,7 @@ def make_csvs(dirname, debug):
         w, h = im.size
         # TODO check im.mode before unpacking to support RGB and RGBA, right now this assumes RGBA mode with the 4 parts r, g, b, a
 
-        coords = []
+        coords = [['x','y','value']]
 
         if debug:
             drawpix = im.load()
