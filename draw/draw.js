@@ -1,12 +1,14 @@
 // thanks to https://gist.github.com/rjrodger/1011032
 window.onload = function() {
 
+    // CANVAS
+
     document.ontouchmove = function(e){ e.preventDefault(); }
 
     var canvas  = document.getElementById('main');
     var canvastop = canvas.offsetTop
 
-        var context = canvas.getContext("2d");
+    var context = canvas.getContext("2d");
 
     var lastx;
     var lasty;
@@ -60,9 +62,21 @@ window.onload = function() {
         lasty = newy;
     }
 
+    // CLEAR BUTTON
 
-    var clearButton = document.getElementById('clear')
-        clearButton.onclick = clear
+    var clearButton = document.getElementById('clear');
+    clearButton.onclick = clear;
+    clear();
 
-        clear()
+    // SUBMIT BUTTON
+
+    function submit() {
+        console.log('message:', messageInput.value);
+    }   
+
+    var submitButton = document.getElementById('submit');
+    submitButton.onclick = submit;
+
+    var messageInput = document.getElementById('message');
+
 }
