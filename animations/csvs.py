@@ -14,9 +14,12 @@ def make_csvs(dirname, debug):
     pngs = [dirname+f for f in pngs]
 
     coords = []
+    coords_header = []
     with open(dirname + 'grid.csv', 'rb') as fgrid:
-        coords = list([int(x), int(y)] for [x,y] in csv.reader(fgrid))
-    coords_header = ['x', 'y']
+        strcoords = list(csv.reader(fgrid))
+        coords_header = strcoords[0]
+        coords = list([int(x), int(y), int(i), int(j)] for [x,y,i,j] in strcoords[1:])
+        print 'coords header', coords_header
 
     for filename in pngs:
         im = Image.open(filename)
@@ -32,7 +35,7 @@ def make_csvs(dirname, debug):
         coords_header.append('f' + frame)
         for i in range(len(coords)):
             coord = coords[i]
-            x,y = coord[0], coord[1]
+            x,y, = coord[0], coord[1]
             r,g,b,a = im.getpixel((x,y))
 
             if r == 255 and g == 255 and b == 255:
