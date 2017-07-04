@@ -1,0 +1,26 @@
+README
+
+To run the app, you need to have nodejs installed. 
+In Terminal, cd to this project folder’s directory, then type in Terminal: node app.js
+
+Getting Started with creating an app to connect with NLU service
+1. Install nodejs and Sublime
+2. Sign up for IBM Bluemix Account (30 days trial), create a Natural Language Understanding Service and copy down the username and password from Service Credentials
+3. Create a separate project folder
+4. Create a .js file as main .js file for editing the app (you can call it app.js)
+5. In Terminal, cd to the project folder
+6. Still in Terminal, to create package.json file, type: npm init , ensure that app.js is under ‘main’ for the package.json
+7. To save Watson module as a dependency, type: npm install watson-developer-cloud --save
+8. Refer to this API reference to get examples 
+https://www.ibm.com/watson/developercloud/natural-language-understanding/api/v1/#post-analyze
+
+These are my Service Credentials I’m currently using:
+Credentials-1
+{
+  "url": "https://gateway.watsonplatform.net/natural-language-understanding/api",
+  "username": "7c8f8b9a-1c24-4f57-91b5-7bb41337e35d",
+  "password": "wy4c1bDCHN3P"
+}
+
+Cheers,
+Samantha Chan
