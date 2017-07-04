@@ -19,8 +19,8 @@ coords = []
 # background
 draw.rectangle([0,0,width,height], fill=(55,55,55))
 
-for i in range(n_rows):
-    for j in range(n_cols):
+for i in range(n_cols):
+    for j in range(n_rows):
         x = i*(x_spacing + 2*dot_r) + (j%2)*(x_spacing/2+dot_r)
         y = j*(y_spacing + 2*dot_r)
         if x < 0 or y < 0:
