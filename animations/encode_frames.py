@@ -68,10 +68,20 @@ def make_csvs(dirname, debug):
 
 
 if __name__ == "__main__":
+    # sanity check the args
     if len(sys.argv) < 2:
         print "Please specify the directory containing the animation files"
         quit()
+
+    # debug mode on or off
     debug = False
     if len(sys.argv) >= 3 and sys.argv[2] == 'debug':
         debug = True
-    make_csvs(sys.argv[1], debug)
+
+    # user can choose to do all animations at once or just one animation
+    if sys.argv[1] == "all":
+        animation_dirs = ['animations/'+f for f in os.listdir('animations')]
+        for a in animation_dirs:
+            make_csvs(a, debug)
+    else:
+        make_csvs(sys.argv[1], debug)
