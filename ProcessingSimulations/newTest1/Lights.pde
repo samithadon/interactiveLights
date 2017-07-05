@@ -8,29 +8,61 @@ class Lights {
   Table table;
   Light[][] lights;
   int[] lightLenghts;
+  
+  int modTemp =0;
+  int modTemp1=0;
 
   int testIndex = 0;
 
   Color[][][] pdsColors;
 //println(numOfLines);
-  Lights (String pointData, float xoffset, float yoffset, float scale) {
+  Lights (String pointData, int fps1) {
+    
+    fps = fps1;
     //println(numOfLines);
      //println(numOfPos);
     lights = new Light[numOfLines][numOfPos];
     // lightLenghts = new int[numOfLines];
     table = loadTable(pointData, "header");
-    int y = 0;
+    //int y = 0;
     for (TableRow row : table.rows()) {
-      int pds = row.getInt("pds");
+      //int pds = row.getInt("pds");
       // println(pds);
-
-      for(int x=0; x< numOfPos; x++){
+      
+       int x = row.getInt("x")/2;
+      int y = row.getInt("y")/2;
+       PVector pLoc = new PVector(x,y);
+       
+       int i = row.getInt("i");
+       int j = row.getInt("j");
+       
+      // Light light = new Light(pLoc, pds, lightStrand, y);
+      // x = (x-5)/11;
+       //println("X =" + x);
+       //y = (y-5)/22;
+       //println("Y =" + y);
+       int pds = floor(x/8);
+        //println("pds =" + pds);
+       int lightStrand = x%8;
+        //println("lightStarnd =" + lightStrand);
+        
+        Light light = new Light(pLoc, pds, lightStrand, j);
+       lights[i][j] = light;
+       //modTemp = x%2;
+       //modTemp1 = y%2;
+       //if(modTemp==1 || modTemp1==1){
+        // println("pds =" + lights[x][y].pdsID);
+         // println("lightStarnd =" + lights[x][y]);
+          
+       //}
+       
+     /* for(int x=0; x< numOfPos; x++){
         PVector pLoc = new PVector(x * dx + (dx * (y % 2) / 2 ) + xOffset, y * dy + yOffset);
         Light light = new Light(pLoc, pds, row.getInt("strand"), x, row.getInt("l" + x));
         // println(pds, ", ", y, ", ", x, ", ", row.getInt("l" + x));
         lights[y][x] = light;
-      }
-      y++;
+      }*/
+      //y++;
     }
 
     // println("10, 5: ", lights[10][5].pdsID, ", ", lights[10][5].strandID, ", ", lights[10][5].positionID);
@@ -53,7 +85,13 @@ class Lights {
   void clearLights() {
     for(int i=0; i< lights.length; i++){
       for(int j=0; j < lights[i].length; j++){
-        lights[i][j].clearRGB();
+        
+        
+        // modTemp = j%2;
+         //modTemp1 = i%2;
+         //if(modTemp==0 && modTemp1 == 0){
+         lights[i][j].clearRGB();
+         //}
         // lights[i][j].clearRGBReset();
       }
     }
@@ -62,10 +100,12 @@ class Lights {
   void drawMap() {
     for(int i=0; i< lights.length; i++){
       for(int j=0; j < lights[i].length; j++){
-        if(lights[i][j].district > 0){
+        
+        // lights[i][j].intensity = intensityRatio[lights[i][j]] + 0.4;
+       /* if(lights[i][j].district > 0){
           lights[i][j].intensity = intensityRatio[lights[i][j].district - 1] + 0.4;
           lights[i][j].addRGBColor(true, 1.0);
-        }
+        }*/
       }
     }
   }
@@ -73,15 +113,15 @@ class Lights {
   void highlightMap() {
     for(int i=0; i< lights.length; i++){
       for(int j=0; j < lights[i].length; j++){
-        if(lights[i][j].district > 0){
+        //if(lights[i][j].district > 0){
           lights[i][j].intensity = 3.0;
           lights[i][j].addRGBColor(true, 3.0);
-        }
+        //}
       }
     }
   }
 
-  void drawDistrcit(int dist, float inten) {
+  /*void drawDistrcit(int dist, float inten) {
     for(int i=0; i< lights.length; i++){
       for(int j=0; j < lights[i].length; j++){
         if(lights[i][j].district == dist){
@@ -90,7 +130,7 @@ class Lights {
         }
       }
     }
-  }
+  }*/
 
   void drawLight(int x, int y, float inten) {
     lights[y][x].intensity = inten;
@@ -108,10 +148,16 @@ class Lights {
   void animateBackground(){
     for(int i=0; i< lights.length; i++){
       for(int j=0; j < lights[i].length; j++){
-        if(lights[i][j].district == 0){
-          lights[i][j].intensity = random(0.4);
+        //if(lights[i][j].district == 0){
+          println("i" + i);
+         println("j" + j);
+        modTemp = j%2;
+         modTemp1 = i%2;
+         //if(modTemp==0 && modTemp1 == 0){
+            println("j" +lights[i][j] );
+         lights[i][j].intensity = random(0.4);
           lights[i][j].addRGBColor(false, 1.0);
-        }
+         //}
       }
     }
   }
@@ -168,7 +214,12 @@ class Lights {
   void drawLights() {
     for(int i=0; i< lights.length; i++){
       for(int j=0; j < lights[i].length; j++){
+        
+        // modTemp = j%2;
+         //modTemp1 = i%2;
+         //if(modTemp==0 && modTemp1 == 0){
         lights[i][j].draw();
+         //}
       }
     }
   }

@@ -1,13 +1,22 @@
 // thanks to https://gist.github.com/rjrodger/1011032
 window.onload = function() {
 
-    // CANVAS
+    // WE WANT TO RECORD THEIR DRAWING TO SEND TO DISPLAY
+
+    var drawing = [];
+
+    // FIND THE UI ELEMENTS
+
+    var clearButton = document.getElementById('clear');
+    var submitButton = document.getElementById('submit');
+    var messageInput = document.getElementById('message');
+
+    // INITIALIZE CANVAS
 
     document.ontouchmove = function(e){ e.preventDefault(); }
 
     var canvas  = document.getElementById('main');
     var canvastop = canvas.offsetTop
-
     var context = canvas.getContext("2d");
 
     var lastx;
@@ -18,10 +27,14 @@ window.onload = function() {
     context.lineJoin = 'round';
     context.lineWidth = 5;
 
+    // FUNCTIONS 
+
     function clear() {
         context.fillStyle = "#ffffff";
         context.rect(0, 0, 300, 300);
         context.fill();
+
+        messageInput.value = "";
     }
 
     function dot(x,y) {
@@ -62,21 +75,15 @@ window.onload = function() {
         lasty = newy;
     }
 
-    // CLEAR BUTTON
+    // HOOK UP EVENT LISTENERS
 
-    var clearButton = document.getElementById('clear');
     clearButton.onclick = clear;
     clear();
 
-    // SUBMIT BUTTON
-
     function submit() {
         console.log('message:', messageInput.value);
+        clear();
     }   
-
-    var submitButton = document.getElementById('submit');
     submitButton.onclick = submit;
-
-    var messageInput = document.getElementById('message');
 
 }
