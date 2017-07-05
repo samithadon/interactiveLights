@@ -5,25 +5,29 @@ P5_KiNET PDS;
 
 int i, mod;
 PFont f;
+String frameCSV = "fireworks/frames.csv";
+String frameCSV1 = "fireflies/frames.csv";
+String frameCSV2 = "rays/frames.csv";
+String grid = "grid.csv";
 
-String lightsCSV = "fireworks/0.csv";
-String lightsCSV1 = "fireworks/1.csv";
-String lightsCSV2 = "fireworks/2.csv";
-String lightsCSV3 = "fireworks/3.csv";
-String lightsCSV4 = "fireworks/4.csv";
-String lightsCSV5 = "fireworks/5.csv";
-String lightsCSV6 = "fireworks/6.csv";
-String lightsCSV7 = "fireworks/7.csv";
-String lightsCSV8 = "fireworks/8.csv";
-String lightsCSV9 = "fireworks/9.csv";
-String lightsCSV10 = "fireworks/10.csv";
-String lightsCSV11 = "fireworks/11.csv";
-String lightsCSV12 = "fireworks/12.csv";
-String lightsCSV13 = "fireworks/13.csv";
-String lightsCSV14 = "fireworks/14.csv";
-String lightsCSV15 = "fireworks/15.csv";
-String lightsCSV16 = "fireworks/16.csv";
-String lightsCSV17 = "fireworks/17.csv";
+//String lightsCSV = "fireworks/0.csv";
+//String lightsCSV1 = "fireworks/1.csv";
+//String lightsCSV2 = "fireworks/2.csv";
+//String lightsCSV3 = "fireworks/3.csv";
+//String lightsCSV4 = "fireworks/4.csv";
+//String lightsCSV5 = "fireworks/5.csv";
+//String lightsCSV6 = "fireworks/6.csv";
+//String lightsCSV7 = "fireworks/7.csv";
+//String lightsCSV8 = "fireworks/8.csv";
+//String lightsCSV9 = "fireworks/9.csv";
+//String lightsCSV10 = "fireworks/10.csv";
+//String lightsCSV11 = "fireworks/11.csv";
+//String lightsCSV12 = "fireworks/12.csv";
+//String lightsCSV13 = "fireworks/13.csv";
+//String lightsCSV14 = "fireworks/14.csv";
+//String lightsCSV15 = "fireworks/15.csv";
+//String lightsCSV16 = "fireworks/16.csv";
+//String lightsCSV17 = "fireworks/17.csv";
 float xyScale = 0.05;
 float xOffset = 50;
 float yOffset = 50;
@@ -32,6 +36,7 @@ float dy = 12; //12
 float r = 5;
 Lights lights;
 Lights lights2;
+Animation animation;
 
 int numOfDistricts = 28;
 int disIndx = 0;
@@ -40,16 +45,16 @@ float[] intensityRatio = new float[numOfDistricts];
 
 
 //Variables
-int fps = 10;
+int fps;
 int radius = 5;   // LED Rad
 int radiusR = 50;   //45 number of LEDs per animal (use pi*r*r)
 float factorK = 2.0;  // speed
 int sensorRadius = 10;
 
 // light stripes
-int numPDS = 5;
-int numOfLines = 36;
-int numOfPos = 44;
+int numPDS = 8;
+int numOfLines = 30;
+int numOfPos = 30;
 
 // test
 int testBG = 0;
@@ -62,7 +67,7 @@ int countWave=0;
 
 
 String[] ipPDSs = {"10.0.38.109", "10.3.100.102", "10.3.100.103", "10.3.100.104", "10.3.100.105"};
-int[] pdsCap = {8, 8, 8, 8, 4};
+int[] pdsCap = {8, 8, 8, 8, 8, 8, 8, 4};
 // String ipPDS2 = "10.3.100.101";
 
 // socket handler for server communication
@@ -110,6 +115,11 @@ void setup() {
   PDS = new P5_KiNET(this);
 
   pdsColorsSend = new Color[numOfPos];
+  lights = new Lights(grid,10);
+  animation = new Animation(frameCSV1, 10);
+//animation = new Animation(frameCSV1,10);
+//animation = new Animation(frameCSV2,15);
+ // lights = new Lights(grid,10);
 
   frameRate(fps);
   size(int(680) , 680);
@@ -119,7 +129,10 @@ void setup() {
    dataPort = new Serial(this, Serial.list()[2], 115200);
   dataPort.bufferUntil('\n');
 
-  //lights = new Lights(lightsCSV, xOffset, yOffset, xyScale);
+//animation = new Animation(frameCSV, 12);
+//animation = new Animation(frameCSV1);
+//animation = new Animation(frameCSV2);
+
   //lights2= new Lights(lightsCSV2, xOffset, yOffset, xyScale);
  // wave = new Wave();
   // sw = new SoundWave();
@@ -162,11 +175,18 @@ void setup() {
 }
 
 void draw () {
-  
-  
   ticker++;
-  drawImage();
-
+  lights.clearLights();
+  
+  //drawImage();
+//animation.drawAnimation();
+ //lights.animateBackground();
+ 
+ animation.render(lights);
+ 
+// animation.drawAnimation();
+ 
+  lights.drawLights();
   //background(0);
   //lights.clearLights();
   //
@@ -320,7 +340,7 @@ void keyPressed() {
 }
 
 
-void drawImage(){
+/*void drawImage(){
   
   mod = i%34;
   
@@ -958,7 +978,7 @@ void drawImage(){
   }
   }
   i++;
-}
+}*/
 
 void readMessage(){
   
@@ -1032,18 +1052,156 @@ void drawText(){
 class Animation {
   
   int r;
-  static int rows;
-  static int columns;
+   int rows;
+   int columns;
   Light[][] lights;
   int red, green, blue;
   Table table;
+  int count=3;
+  int mod =0;
+  int shift=0;
   
-  Animation(String aData){
+  Animation(String aData, int fps1){
     
-    table = loadTable( lightsCSV17, "header");
+    fps= fps1;
+    table = loadTable( aData, "header");
     
-    row = table.getRowCount();
+    rows = table.getRowCount();
     columns = table.getColumnCount();
+    println(columns);
+    
+    
+  }
+  
+  void drawAnimation(){
+    
+   // int shift = (int)random(200);
+    println(shift);
+    if(count> columns-5){
+      count=3;
+      //shift = 22;
+    }
+    
+    for(int i =0; i<=count ; i++){
+    println("count =" + count);
+    println("i =" + i);
+    for (TableRow row : table.rows()) {
+     // if(count=3){
+      //color c = color(0 ,0,0);
+     // }else{
+       // color c = color(0 ,0,0);
+     // }
+      int x = row.getInt("x")/2;
+      int y = row.getInt("y")/2;
+      //println(i);
+      int value = row.getInt("f" + i);
+      
+      
+      
+      if(value==1){
+        
+        color c = color(255,0,100);
+        fill(c);
+        //if(value==0){
+        //ellipse(x,y,5,5);
+        //}else{
+          ellipse(x+shift,y,5,5);
+        //}
+        
+      }else{
+        
+        color c = color(255,255,255);
+        fill(c);
+        //if(value==0){
+        ellipse(x,y,5,5);
+        //}else{
+          //ellipse(x+shift,y+shift,5,5);
+        //}
+      }
+      
+  }
+  }
+  count++;
+    
+  }
+  
+  void render(Lights l){
+    
+       // println(shift);
+    if(count> columns-5){
+      count=3;
+      shift = (int)random(-8,8);
+      println("shift" + shift);
+    }
+    
+    for(int i =0; i<=count ; i++){
+    println("count =" + count);
+    println("i =" + i);
+    for (TableRow row : table.rows()) {
+     // if(count=3){
+      //color c = color(0 ,0,0);
+     // }else{
+       // color c = color(0 ,0,0);
+     // }
+      int x = row.getInt("x")/2;
+      int y = row.getInt("y")/2;
+      
+       int m = row.getInt("i");
+       int n = row.getInt("j");
+      //println(i);
+      int value = row.getInt("f" + i);
+      
+      
+      
+      if(value==1){
+        
+        //color c = color(255,0,100);
+        //fill(c);
+        //if(value==0){
+        //ellipse(x,y,5,5);
+        //}else{
+          //ellipse(x+shift,y,5,5);
+          if(m+shift < 30 && n+shift < 30 && m+shift > 0 && n+shift >0 ){
+              l.lights[m+shift][n+shift].intensity = 1.0;
+              l.lights[m+shift][n+shift].addRGBColor(true, 1.0);
+          }else{
+             
+                l.lights[m][n].intensity =1.0;
+              l.lights[m][n].addRGBColor(true, 1.0);
+            
+          }
+        //}
+        
+      }else{
+        
+        //color c = color(255,255,255);
+       // fill(c);
+        //if(value==0){
+        //ellipse(x,y,5,5);
+         if(m+shift < 30 && n+shift < 30 && m+shift > 0 && n+shift >0 ){
+         l.lights[m+shift][n+shift].intensity = random(0.4);
+          l.lights[m+shift][n+shift].addRGBColor(false, 1.0);
+         }else{
+            
+             l.lights[m][n].intensity = random(0.4) ;
+              l.lights[m][n].addRGBColor(false, 1.0);
+            
+         }
+        //}else{
+          //ellipse(x+shift,y+shift,5,5);
+        //}
+      }
+      
+  }
+  }
+  count++;
+    
+    
+    
+    
+    
+    
+    
     
     
   }
