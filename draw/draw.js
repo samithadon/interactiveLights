@@ -1,16 +1,6 @@
 // thanks to https://gist.github.com/rjrodger/1011032
 window.onload = function() {
 
-    // WE WANT TO RECORD THEIR DRAWING TO SEND TO DISPLAY
-
-    var drawing = [];
-
-    // FIND THE UI ELEMENTS
-
-    var clearButton = document.getElementById('clear');
-    var submitButton = document.getElementById('submit');
-    var messageInput = document.getElementById('message');
-
     // INITIALIZE CANVAS
 
     document.ontouchmove = function(e){ e.preventDefault(); }
@@ -27,14 +17,21 @@ window.onload = function() {
     context.lineJoin = 'round';
     context.lineWidth = 5;
 
+    // WE WANT TO RECORD THEIR DRAWING TO SEND TO DISPLAY
+
+    var drawing = [];
+
+    // FIND THE UI ELEMENTS
+
+    var clearButton = document.getElementById('clear');
+    var submitButton = document.getElementById('submit');
+    var messageInput = document.getElementById('message');
+    var body = document.getElementsByTagName('body')[0];
+
     // FUNCTIONS 
 
-    function clear() {
-        context.fillStyle = "#ffffff";
-        context.rect(0, 0, 300, 300);
-        context.fill();
-
-        messageInput.value = "";
+    function drawing_add_point(x, y) {
+        drawing.push({x: x, y: y, t: Date.now()});
     }
 
     function dot(x,y) {
@@ -61,6 +58,7 @@ window.onload = function() {
         lasty = event.touches[0].clientY - canvastop;
 
         dot(lastx,lasty);
+        drawing_add_point(lastx,lasty);
     }
 
     canvas.ontouchmove = function(event){                   
@@ -70,20 +68,36 @@ window.onload = function() {
         var newy = event.touches[0].clientY - canvastop;
 
         line(lastx,lasty, newx,newy);
+        drawing_add_point(newx,newy);
 
         lastx = newx;
         lasty = newy;
     }
+
+    function clear() {
+        context.fillStyle = "#ffffff";
+        context.rect(0, 0, 300, 300);
+        context.fill();
+
+        messageInput.value = "";
+
+        drawing = [];
+    }
+
+    function submit() {
+        console.log('message:', messageInput.value);
+        console.log('drawing:', drawing);
+        body.append(messageInput.value);
+        body.append(JSON.stringify(drawing));
+        clear();
+    }   
 
     // HOOK UP EVENT LISTENERS
 
     clearButton.onclick = clear;
     clear();
 
-    function submit() {
-        console.log('message:', messageInput.value);
-        clear();
-    }   
+    //submitButton.onclick = submit;
     submitButton.onclick = submit;
 
 }

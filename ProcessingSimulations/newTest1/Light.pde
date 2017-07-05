@@ -7,23 +7,23 @@ class Light {
   int strandID;
   int positionID;
   float intensity;
-  int district;
+  //int district;
 
   int red;
   int green;
   int blue;
 
-  Light(PVector pLoc, int pdsID, int strandID, int positionID, int district) {
+  Light(PVector pLoc, int pdsID, int strandID, int positionID) {
     this.pLoc = pLoc;
     this.pdsID = pdsID;
     this.strandID = strandID;
     this.positionID = positionID;
-    this.district = district;
+    //this.district = district;
     this.intensity = 0.01;
     this.addRGBColor(true, 1.0);
   }
 
-  Light(TableRow row) {
+ /* Light(TableRow row) {
     this.pLoc = new PVector(row.getInt("x") * dx + xOffset, row.getInt("y") * dy + yOffset);
     this.rLoc = new PVector(row.getInt("lx"), row.getInt("ly"), row.getInt("lz"));
     this.pdsID = row.getInt("pds");
@@ -31,7 +31,7 @@ class Light {
     this.positionID = row.getInt("pos");
     this.intensity = row.getInt("y");
     this.addRGBColor(false, 8.0);
-  }
+  }*/
 
   String printRGB() {
     return ("R" + str(red) + " G" + str(green) + " B" + str(blue));
