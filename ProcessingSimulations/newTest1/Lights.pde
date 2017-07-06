@@ -41,9 +41,9 @@ class Lights {
        //println("X =" + x);
        //y = (y-5)/22;
        //println("Y =" + y);
-       int pds = floor(x/8);
+       int pds = floor(i/8);
         //println("pds =" + pds);
-       int lightStrand = x%8;
+       int lightStrand = i%8;
         //println("lightStarnd =" + lightStrand);
         
         Light light = new Light(pLoc, pds, lightStrand, j);
