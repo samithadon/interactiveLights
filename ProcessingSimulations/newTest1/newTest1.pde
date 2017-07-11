@@ -52,7 +52,7 @@ float factorK = 2.0;  // speed
 int sensorRadius = 10;
 
 // light stripes
-int numPDS = 8;
+int numPDS = 4;
 int numOfLines = 30;
 int numOfPos = 30;
 
@@ -66,8 +66,8 @@ int lastSensrX = 0, lastSensrY = 0;
 int countWave=0;
 
 
-String[] ipPDSs = {"10.0.38.109", "10.3.100.102", "10.3.100.103", "10.3.100.104", "10.3.100.105"};
-int[] pdsCap = {8, 8, 8, 8, 8, 8, 8, 4};
+String[] ipPDSs = {"10.0.39.108", "10.0.39.108", "10.3.100.103", "10.3.100.104"};
+int[] pdsCap = {8, 8, 8, 6};
 // String ipPDS2 = "10.3.100.101";
 
 // socket handler for server communication
@@ -116,7 +116,7 @@ void setup() {
 
   pdsColorsSend = new Color[numOfPos];
   lights = new Lights(grid,10);
-  animation = new Animation(frameCSV1, 10);
+  animation = new Animation(frameCSV, 10);
 //animation = new Animation(frameCSV1,10);
 //animation = new Animation(frameCSV2,15);
  // lights = new Lights(grid,10);
@@ -307,7 +307,7 @@ void draw () {
 
   //lights.drawLights();
   //lights2.drawLights();
-  //sendToPDS();
+  sendToPDS();
   // drawText();
   //serverHandler.swapEventQue(waves);
 
