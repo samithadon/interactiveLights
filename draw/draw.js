@@ -1,103 +1,233 @@
-// thanks to https://gist.github.com/rjrodger/1011032
-window.onload = function() {
-
-    // INITIALIZE CANVAS
+var CanvasManager = function(id) {
+    // thanks to https://gist.github.com/rjrodger/1011032
 
     document.ontouchmove = function(e){ e.preventDefault(); }
 
-    var canvas  = document.getElementById('main');
+    var canvas  = document.getElementById(id);
     var canvastop = canvas.offsetTop
     var context = canvas.getContext("2d");
-
-    var lastx;
-    var lasty;
 
     context.strokeStyle = "#000000";
     context.lineCap = 'round';
     context.lineJoin = 'round';
     context.lineWidth = 5;
 
-    // WE WANT TO RECORD THEIR DRAWING TO SEND TO DISPLAY
-
-    var drawing = [];
-
-    // FIND THE UI ELEMENTS
-
-    var clearButton = document.getElementById('clear');
-    var submitButton = document.getElementById('submit');
-    var messageInput = document.getElementById('message');
-    var body = document.getElementsByTagName('body')[0];
-
-    // FUNCTIONS 
-
-    function drawing_add_point(x, y) {
-        drawing.push({x: x, y: y, t: Date.now()});
-    }
-
-    function dot(x,y) {
+    function dot(x,y,color) {
         context.beginPath();
-        context.fillStyle = "#000000";
+        context.fillStyle = color;
+        context.strokeStyle = color;
         context.arc(x,y,1,0,Math.PI*2,true);
         context.fill();
         context.stroke();
         context.closePath();
     }
 
-    function line(fromx,fromy, tox,toy) {
-        context.beginPath();
-        context.moveTo(fromx, fromy);
-        context.lineTo(tox, toy);
-        context.stroke();
-        context.closePath();
-    }
-
-    canvas.ontouchstart = function(event){                   
-        event.preventDefault();                 
-
-        lastx = event.touches[0].clientX;
-        lasty = event.touches[0].clientY - canvastop;
-
-        dot(lastx,lasty);
-        drawing_add_point(lastx,lasty);
-    }
-
-    canvas.ontouchmove = function(event){                   
-        event.preventDefault();                 
-
-        var newx = event.touches[0].clientX;
-        var newy = event.touches[0].clientY - canvastop;
-
-        line(lastx,lasty, newx,newy);
-        drawing_add_point(newx,newy);
-
-        lastx = newx;
-        lasty = newy;
-    }
-
     function clear() {
+        console.log('CanvasManager clear');
         context.fillStyle = "#ffffff";
         context.rect(0, 0, 300, 300);
         context.fill();
+    }
+    clear();
 
-        messageInput.value = "";
+    function touch_handler(event) {
+        event.preventDefault();                 
+        var x = event.touches[0].clientX;
+        var y = event.touches[0].clientY - canvastop;
+        //dot(x, y, "#FF0000");
+        if (drw) drw.add_point(x, y);
+    };
 
-        drawing = [];
+    canvas.ontouchstart = touch_handler;
+    canvas.ontouchmove = touch_handler;
+
+    var drw = null;
+    function link_to_animation(a) {
+        drw = a;
+    }
+
+    return {
+        dot: dot,
+        clear: clear,
+        link_to_animation: link_to_animation,
+        width: canvas.width,
+        height: canvas.height,
+    };
+}
+
+var animation = function(canv) {
+
+    /////////////////////////////////////////////
+    // SETTINGS ////////////////////////////////
+    // how finely we pixelate the grid ////////
+    //////////////////////////////////////////
+    var r = 5;
+    var xsp = 5;
+    var ysp = 5;
+    var dt = 20; // we only care about things at the granularity of 20ms
+
+    var headers = ['x','y','i','j'];
+   
+    ///////////////////////////////////////////// 
+    // HELPER FUNCTIONS ////////////////////////
+    // grid locations, indices, etc ///////////
+    //////////////////////////////////////////
+
+    // convert x,y to i,j
+    function grid_ij(x,y) {
+        var j = Math.floor(y / (ysp + 2*r));
+        var i = j%2 ? Math.floor((x-xsp/2-r)/(xsp+2*r)) : Math.floor(x/(xsp+2*r));
+        return [i,j];
+    }
+    var min_ij = grid_ij(0,0);
+    var max_ij = grid_ij(canv.width, canv.height);
+
+    // convert i,j to x,y
+    function grid_xy(i,j) {
+        var x = i*(xsp + 2*r) + (j%2)*(xsp/2+r);
+        var y = j*(ysp + 2*r);
+        return [x,y];
+    }
+
+    // the index in __a__ where the point (x,y,i,j) is stored
+    function a_index(i,j) {
+        return i*(max_ij[1] + 1) + j;
+    }
+
+    // we only care about time to the granularity of dt
+    var start = Date.now();
+    function grid_t(t) {
+        return Math.floor((t - start)/dt) * dt;
+    }
+
+    // INITIALIZE A FOR ALL GRID POINTS
+    // and add a first 'frame' at t='0' where it is all 0's
+    // __a__ stores the animation in the format
+    // (leave headers off for now)
+    // a.x = [x1, x2, x3, ... ] x coords of all grid points
+    // a.y = [y1, y2, y3, ... ] y coords of all grid points
+    // a.i = [i1, i2, i3, ... ] i indices of all grid points
+    // a.j = [j1, j2, j3, ... ] j indices of all grid points
+    // a.times = [t1, t2, ... ] for all the frames of the animation
+    // a.frames = {
+    //      JSON.stringify(t1) : [ 0 or 1 for each grid point ],
+    //      JSON.stringify(t2) : [ 0 or 1 for each grid point ], 
+    //      ...
+    // }
+    var a = {};
+    function init() { // TODO i think something fishy is happening with scope here, overwriting a is not working
+        console.log('animation init');
+        start = Date.now();
+        a = {};
+        _.each(headers, function(h) {
+            a[h] = [];
+        });
+        a.times = [];
+        a.frames = {};
+        var t = grid_t(start);
+        a.times.push(t);
+        a.frames[JSON.stringify(t)] = [];
+        for (var i = min_ij[0]; i <= max_ij[0]; i++) {
+            for (var j = min_ij[0]; j <= max_ij[0]; j++) {
+                var xy = grid_xy(i,j);            
+                a.x.push(xy[0]);
+                a.y.push(xy[1]);
+                a.i.push(i);
+                a.j.push(j);
+                canv.dot(xy[0],xy[1],"#000000");
+                a.frames[JSON.stringify(t)].push(0);
+            }
+        }
+        console.log('initialized a', a);
+    }
+    init();
+
+    // ADD INCOMING FRAMES AS PEOPLE DRAW ON CANVAS
+    function add_point(x,y) {
+        var new_t = grid_t(Date.now());
+        var old_t = _.last(a.times);
+        var ij = grid_ij(x,y);
+        var i = ij[0];
+        var j = ij[1];
+        // if points occur within dt ms of each other, group them together
+        if (new_t - old_t < dt) {
+            a.frames[JSON.stringify(old_t)][a_index(i,j)] = 1;
+            return;
+        }
+        // if a longer gap between points, fill in missing frames in between
+        var ts = _.range(old_t + dt, new_t, dt);
+        _.each(ts, function(t) {
+            a.times.push(t);
+            a.frames[JSON.stringify(t)] = _.clone(a.frames[JSON.stringify(t-dt)]);
+        });
+        // then add a new frame for the latest time
+        a.times.push(new_t);
+        a.frames[JSON.stringify(new_t)] = _.clone(a.frames[JSON.stringify(new_t-dt)]);
+        a.frames[JSON.stringify(new_t)][a_index(i,j)] = 1;
+        // draw on the grid
+        var gridxy = grid_xy(i,j);
+        canv.dot(gridxy[0], gridxy[1], "#FF0000");
+    }
+
+    function get_csv() {
+        var csv = '';
+        var row = [];
+        row = row.concat(headers);
+        row = row.concat(a.times);
+        csv += row.join(',');
+        _.each(a.x, function(x, index) {
+            row = [];
+            _.each(headers, function(h) {
+                row.push(a[h][index]);
+            });
+            _.each(a.times, function(t) {
+                row.push(a.frames[JSON.stringify(t)][index]);
+            });
+            csv += '\n' + row.join(',');
+        });
+        return csv;
+    }
+
+    return {
+        add_point: add_point,
+        get_csv: get_csv,
+        init: init,
+        // TODO remove this later
+        a: a,
+    };
+}
+
+window.onload = function() {
+
+    var canvMgr = CanvasManager('main');
+    var drawing = animation(canvMgr);
+    canvMgr.link_to_animation(drawing); // TODO kinda hacky
+
+    // TODO remove these later
+    window.my_animation = drawing;
+
+    var $clearButton = $('#clear');
+    var $submitButton = $('#submit');
+    var $messageInput = $('#message');
+    var $body = $('body');
+
+    function clear() {
+        canvMgr.clear();
+        $messageInput.val('');
+        drawing.init();
     }
 
     function submit() {
-        console.log('message:', messageInput.value);
-        console.log('drawing:', drawing);
-        body.append(messageInput.value);
-        body.append(JSON.stringify(drawing));
+        console.log('submit message:', $messageInput.val());
+        var csv = drawing.get_csv();
+        console.log('submit csv', csv);
+        // TODO send the animation to the display
         clear();
     }   
 
     // HOOK UP EVENT LISTENERS
 
-    clearButton.onclick = clear;
-    clear();
-
-    //submitButton.onclick = submit;
-    submitButton.onclick = submit;
-
+    $clearButton.click(clear);
+    $submitButton.click(submit);
 }
+
