@@ -134,7 +134,7 @@ var animation = function(canv) {
                 a.y.push(xy[1]);
                 a.i.push(i);
                 a.j.push(j);
-                canv.dot(xy[0],xy[1],"#000000");
+                canv.dot(xy[0],xy[1],"#606060");
                 a.frames[JSON.stringify(t)].push(0);
             }
         }
