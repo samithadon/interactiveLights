@@ -13,6 +13,7 @@ def make_csvs(dirname, debug):
     pngs = sorted(pngs, key=lambda f: int(f.strip('.png')))
     pngs = [dirname+f for f in pngs]
 
+    # basic grid on which the animation is based
     coords = []
     coords_header = []
     with open(dirname + 'grid.csv', 'rb') as fgrid:
@@ -21,7 +22,13 @@ def make_csvs(dirname, debug):
         coords = list([int(x), int(y), int(i), int(j)] for [x,y,i,j] in strcoords[1:])
         print 'coords header', coords_header
 
+    # framerate of the animation
+    framerate_ms = 100
+    with open(dirname + 'framerate_ms.txt', 'rb') as frate:
+        framerate_ms = int(list(csv.reader(frate))[0][0])
+
     for filename in pngs:
+        # opening the image to check its pixels
         im = Image.open(filename)
         print 'processing image', filename, 'size', im.size, 'mode', im.mode
         w, h = im.size
@@ -31,8 +38,8 @@ def make_csvs(dirname, debug):
             drawpix = im.load()
 
         # add a column to coords for this frame of the animation, where 0/1 encodes on/off of lights
-        frame = filename.strip('.png').strip(dirname)
-        coords_header.append('f' + frame)
+        frame = int(filename.strip('.png').strip(dirname))
+        coords_header.append(frame * framerate_ms)
         for i in range(len(coords)):
             coord = coords[i]
             x,y, = coord[0], coord[1]
@@ -61,10 +68,20 @@ def make_csvs(dirname, debug):
 
 
 if __name__ == "__main__":
+    # sanity check the args
     if len(sys.argv) < 2:
         print "Please specify the directory containing the animation files"
         quit()
+
+    # debug mode on or off
     debug = False
     if len(sys.argv) >= 3 and sys.argv[2] == 'debug':
         debug = True
-    make_csvs(sys.argv[1], debug)
+
+    # user can choose to do all animations at once or just one animation
+    if sys.argv[1] == "all":
+        animation_dirs = ['animations/'+f for f in os.listdir('animations')]
+        for a in animation_dirs:
+            make_csvs(a, debug)
+    else:
+        make_csvs(sys.argv[1], debug)
