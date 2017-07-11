@@ -203,31 +203,35 @@ window.onload = function() {
     var drawing = animation(canvMgr);
     canvMgr.link_to_animation(drawing); // TODO kinda hacky
 
-    // TODO remove these later
-    window.my_animation = drawing;
-
-    var $clearButton = $('#clear');
-    var $submitButton = $('#submit');
-    var $messageInput = $('#message');
-    var $body = $('body');
+    var messageInput = document.getElementById('message');
+    var localIPInput = document.getElementById('localIP');
 
     function clear() {
         canvMgr.clear();
-        $messageInput.val('');
+        messageInput.value = '';
+        localIPInput.value = '';
         drawing.init();
     }
 
     function submit() {
-        console.log('submit message:', $messageInput.val());
+        var msg = messageInput.value;
+        var localIP = localIPInput.value;
         var csv = drawing.get_csv();
-        console.log('submit csv', csv);
+        console.log('making post request with msg', msg, 'localIP', localIP, 'csv', csv);
+        $.post(localIP + ':3333/', 'hi from the guestbook', function(data, s, jqXHR) {
+            console.log('received back data', data, 'status', s, 'jqXHR', jqXHR);
+        });
         // TODO send the animation to the display
         clear();
     }   
 
     // HOOK UP EVENT LISTENERS
 
-    $clearButton.click(clear);
-    $submitButton.click(submit);
+    var h_clear = new Hammer(document.getElementById('clear'));
+    h_clear.on('tap', clear);
+
+    var h_submit = new Hammer(document.getElementById('submit'));
+    h_submit.on('tap', submit);
+   
 }
 
