@@ -198,6 +198,8 @@ var animation = function(canv) {
 }
 
 window.onload = function() {
+    var socket = io();
+    console.log('socket', socket);
 
     var canvMgr = CanvasManager('main');
     var drawing = animation(canvMgr);
@@ -209,7 +211,6 @@ window.onload = function() {
     function clear() {
         canvMgr.clear();
         messageInput.value = '';
-        localIPInput.value = '';
         drawing.init();
     }
 
@@ -217,8 +218,11 @@ window.onload = function() {
         var msg = messageInput.value;
         var localIP = localIPInput.value;
         var csv = drawing.get_csv();
-        console.log('making post request with msg', msg, 'localIP', localIP, 'csv', csv);
-        $.post(localIP + ':3333/', 'hi from the guestbook', function(data, s, jqXHR) {
+        // need id, count of msgs sent, message is csv
+        var data = { message: msg };
+        // http://192.168.43.119/login
+        console.log('making post request with msg', msg, 'localIP', localIP, 'data', data);
+        $.post(localIP, data, function(data, s, jqXHR) {
             console.log('received back data', data, 'status', s, 'jqXHR', jqXHR);
         });
         // TODO send the animation to the display
