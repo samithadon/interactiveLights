@@ -197,8 +197,29 @@ var animation = function(canv) {
     };
 }
 
+//function SIOManager(io){
+  // db.init();
+  // db.connect(this.updateStats);
+  //fromRemotes = io.of('/fromremote');
+  //fromRemotes.on('connection', this.remoteConnect);
+  // fromRemotes.on('bdmsg', this.remoteActionMessage);
+  // fromRemotes.on('connection', function(socket){remoteConnect(socket);});
+  //toServers = io.of('/toservers');
+  // toServers.on('connection', function(socket){serverConnect(socket);});
+  //toServers.on('connection', this.serverConnect);
+  //siom = this;
+  // this.className = 'SIOManager';
+//}
+
+
+
 window.onload = function() {
-    var socket = io("http://localhost:3000/toservers");
+    var socket = io("http://localhost:3000/draw");
+    //socket.on('connect', function(d) {
+        //console.log('socket connected, got info', d);
+    //});
+
+
     console.log('socket', socket);
 
     var canvMgr = CanvasManager('main');
@@ -207,7 +228,7 @@ window.onload = function() {
 
     var messageInput = document.getElementById('message');
     var localIPInput = document.getElementById('localIP');
-
+   
     function clear() {
         canvMgr.clear();
         messageInput.value = '';
@@ -219,12 +240,16 @@ window.onload = function() {
         var localIP = localIPInput.value;
         var csv = drawing.get_csv();
         // need id, count of msgs sent, message is csv
-        var data = { message: msg };
+        var data = { message: msg,csv:csv };
         // http://192.168.43.119/login
-        console.log('making post request with msg', msg, 'localIP', localIP, 'data', data);
-        $.post(localIP, data, function(data, s, jqXHR) {
-            console.log('received back data', data, 'status', s, 'jqXHR', jqXHR);
+        console.log('socket emitting csvAnm with data', data);
+        socket.emit("csvAnm",data, function(d) {
+            console.log('got socket reply back', d);
         });
+
+
+
+
         // TODO send the animation to the display
         clear();
     }   

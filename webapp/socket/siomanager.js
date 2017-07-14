@@ -1,5 +1,6 @@
-fromRemotes = {};
+//fromRemotes = {};
 dbStats =[];
+fromDraw={};
 
 // Data base manager
 var DBM = new require('./../db/DBManager.js');
@@ -7,8 +8,10 @@ var DBM = new require('./../db/DBManager.js');
 function SIOManager(io){
   // db.init();
   // db.connect(this.updateStats);
-  fromRemotes = io.of('/fromremote');
-  fromRemotes.on('connection', this.remoteConnect);
+ // fromRemotes = io.of('/fromremote');
+ fromDraw = io.of('/draw');
+  //fromRemotes.on('connection', this.remoteConnect);
+  fromDraw.on('connection', this.drawConnect);
   // fromRemotes.on('bdmsg', this.remoteActionMessage);
   // fromRemotes.on('connection', function(socket){remoteConnect(socket);});
   toServers = io.of('/toservers');
@@ -58,6 +61,18 @@ SIOManager.prototype.serverConnect = function(socket){
     if (typeof fromRemotes.connected[msg.sockid] !== 'undefined') {
       fromRemotes.connected[msg.sockid].emit('stat_reply', msg);
     }
+  });
+};
+
+SIOManager.prototype.drawConnect = function(socket){
+  // console.log('remote connected');
+  socket.on('disconnect', function(){
+    delete fromDraw.connected[this.id];
+    // console.log('remote disconnected');
+  });
+  socket.on('csvAnm', function(d) {
+    console.log('GOT csvAnm event with d', d);
+    toServers.emit('bdmsg', d);
   });
 };
 
