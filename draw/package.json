@@ -1,0 +1,25 @@
+{
+  "name": "webapp_for_sutd_guestbook_memory_wall",
+  "version": "0.0.0",
+  "description": "Webapp for SUTD Guestbook Memory Wall",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samithadon/interactiveLights.git"
+  },
+  "author": "Samitha & Sam & Noura",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samithadon/interactiveLights/issues"
+  },
+  "homepage": "https://github.com/samithadon/interactiveLights#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "http": "0.0.0",
+    "socket.io": "^2.0.3"
+  }
+}

@@ -214,11 +214,7 @@ var animation = function(canv) {
 
 
 window.onload = function() {
-    var socket = io("http://localhost:3000/draw");
-    //socket.on('connect', function(d) {
-        //console.log('socket connected, got info', d);
-    //});
-
+    var socket = io('/draw');
 
     console.log('socket', socket);
 
