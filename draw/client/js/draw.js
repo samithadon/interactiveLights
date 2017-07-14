@@ -30,16 +30,23 @@ var CanvasManager = function(id) {
     }
     clear();
 
-    function touch_handler(event) {
-        event.preventDefault();                 
-        var x = event.touches[0].clientX;
-        var y = event.touches[0].clientY - canvastop;
-        //dot(x, y, "#FF0000");
+    function touch_handler(ev) {
+        ev.preventDefault();                 
+        var x = ev.touches[0].clientX;
+        var y = ev.touches[0].clientY - canvastop;
         if (drw) drw.add_point(x, y);
+    };
+
+    function mouse_handler(ev) {
+        var x = ev.clientX;
+        var y = ev.clientY - canvastop;
+        if (drw && ev.which == 1) drw.add_point(x, y);
     };
 
     canvas.ontouchstart = touch_handler;
     canvas.ontouchmove = touch_handler;
+    canvas.onmousedown = mouse_handler;
+    canvas.onmousemove = mouse_handler;
 
     var drw = null;
     function link_to_animation(a) {
@@ -196,22 +203,6 @@ var animation = function(canv) {
         a: a,
     };
 }
-
-//function SIOManager(io){
-  // db.init();
-  // db.connect(this.updateStats);
-  //fromRemotes = io.of('/fromremote');
-  //fromRemotes.on('connection', this.remoteConnect);
-  // fromRemotes.on('bdmsg', this.remoteActionMessage);
-  // fromRemotes.on('connection', function(socket){remoteConnect(socket);});
-  //toServers = io.of('/toservers');
-  // toServers.on('connection', function(socket){serverConnect(socket);});
-  //toServers.on('connection', this.serverConnect);
-  //siom = this;
-  // this.className = 'SIOManager';
-//}
-
-
 
 window.onload = function() {
     var socket = io('/draw');
