@@ -45,6 +45,7 @@ public class SocketHandle {
        @Override
        public void call(Object... args) {
          addMessageWithEvent(args);
+         println("got message");
        }
 
      }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
