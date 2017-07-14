@@ -8,6 +8,7 @@ class Lights {
   Table table;
   Light[][] lights;
   int[] lightLenghts;
+  int nn=0;
   
   int modTemp =0;
   int modTemp1=0;
@@ -21,17 +22,18 @@ class Lights {
     fps = fps1;
     //println(numOfLines);
      //println(numOfPos);
-    lights = new Light[numOfLines][numOfPos];
+    lights = new Light[13][22];
     // lightLenghts = new int[numOfLines];
     table = loadTable(pointData, "header");
     //int y = 0;
+    //n=22
     for (TableRow row : table.rows()) {
       //int pds = row.getInt("pds");
       // println(pds);
       
        int x = row.getInt("x")/2;
       int y = row.getInt("y")/2;
-       PVector pLoc = new PVector(x,y);
+       PVector pLoc = new PVector(y,x);
        
        int i = row.getInt("i");
        int j = row.getInt("j");
@@ -41,13 +43,26 @@ class Lights {
        //println("X =" + x);
        //y = (y-5)/22;
        //println("Y =" + y);
-       int pds = floor(i/8);
+       //int pds = floor(i/8); // uncomment this line for real simulations
         //println("pds =" + pds);
-       int lightStrand = i%8;
+       //int lightStrand = i%8; // uncomment this line for real simulation
         //println("lightStarnd =" + lightStrand);
+        int pds =0;
+        int lightStrand = floor(i/2);
         
+       // println("lightStrand=" +lightStrand);
+        if((i%2)==0){
+          
         Light light = new Light(pLoc, pds, lightStrand, j);
        lights[i][j] = light;
+        }else{
+          
+           Light light = new Light(pLoc, pds, lightStrand, j+22);
+       lights[i][21-j] = light;
+          
+        }
+        
+        
        //modTemp = x%2;
        //modTemp1 = y%2;
        //if(modTemp==1 || modTemp1==1){
@@ -149,12 +164,12 @@ class Lights {
     for(int i=0; i< lights.length; i++){
       for(int j=0; j < lights[i].length; j++){
         //if(lights[i][j].district == 0){
-          println("i" + i);
-         println("j" + j);
+          //println("i" + i);
+         //println("j" + j);
         modTemp = j%2;
          modTemp1 = i%2;
          //if(modTemp==0 && modTemp1 == 0){
-            println("j" +lights[i][j] );
+           // println("j" +lights[i][j] );
          lights[i][j].intensity = random(0.4);
           lights[i][j].addRGBColor(false, 1.0);
          //}
@@ -200,8 +215,12 @@ class Lights {
     for(int i=0; i< lights.length; i++){
       for(int j=0; j < lights[i].length; j++){
         // if(lights[i][j].pdsID == 1){
+          //println(j);
+          //println(i);
           pdsColors[lights[i][j].pdsID][lights[i][j].strandID][lights[i][j].positionID] = lights[i][j].getLEDColor();
           // println(x, ", ", y);
+           //println(j);
+          //println(i);
         // }else{
           // pdsColors[lights[i][j].pdsID][lights[i][j].strandID][lights[i][j].positionID] = lights[i][j].getLEDColor();
         // }

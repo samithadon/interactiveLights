@@ -198,7 +198,7 @@ var animation = function(canv) {
 }
 
 window.onload = function() {
-    var socket = io();
+    var socket = io("http://localhost:3000/toservers");
     console.log('socket', socket);
 
     var canvMgr = CanvasManager('main');

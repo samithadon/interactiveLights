@@ -4,11 +4,16 @@ import processing.serial.*;
 P5_KiNET PDS;
 
 int i, mod;
+//int mod1, mod2;
 PFont f;
 String frameCSV = "fireworks/frames.csv";
 String frameCSV1 = "fireflies/frames.csv";
 String frameCSV2 = "rays/frames.csv";
-String grid = "grid.csv";
+String grid = "fireflies/grid2.csv";
+String image = "a.jpg";
+String heart = "heart.jpg";
+
+//PImage img;
 
 //String lightsCSV = "fireworks/0.csv";
 //String lightsCSV1 = "fireworks/1.csv";
@@ -37,6 +42,7 @@ float r = 5;
 Lights lights;
 Lights lights2;
 Animation animation;
+drawImage newimage;
 
 int numOfDistricts = 28;
 int disIndx = 0;
@@ -52,26 +58,27 @@ float factorK = 2.0;  // speed
 int sensorRadius = 10;
 
 // light stripes
-int numPDS = 4;
-int numOfLines = 30;
-int numOfPos = 30;
-
+int numPDS = 1;
+//int numOfLines = 30;
+//int numOfPos = 30;
+int numOfLines = 7;
+int numOfPos = 44;
 // test
 int testBG = 0;
 float kickSize, snareSize, hatSize;
 int sensorID = 0;
 boolean singleSensorMode = false;
-//ServerEvent lastSensorActivity;
+ServerEvent lastSensorActivity;
 int lastSensrX = 0, lastSensrY = 0;
 int countWave=0;
 
 
-String[] ipPDSs = {"10.0.39.108", "10.0.39.108", "10.3.100.103", "10.3.100.104"};
-int[] pdsCap = {8, 8, 8, 6};
+String[] ipPDSs = {"10.0.39.108"};
+int[] pdsCap = { 6};
 // String ipPDS2 = "10.3.100.101";
 
 // socket handler for server communication
-//SocketHandle serverHandler;
+SocketHandle serverHandler;
 
 float[] sndWave;
 
@@ -115,19 +122,22 @@ void setup() {
   PDS = new P5_KiNET(this);
 
   pdsColorsSend = new Color[numOfPos];
-  lights = new Lights(grid,10);
-  animation = new Animation(frameCSV, 10);
+  lights = new Lights(grid,20);
+  newimage = new drawImage(image,20);
+  
+  //animation = new Animation(frameCSV1, 10);
 //animation = new Animation(frameCSV1,10);
 //animation = new Animation(frameCSV2,15);
  // lights = new Lights(grid,10);
 
   frameRate(fps);
-  size(int(680) , 680);
+  size(int(22) ,13);
+  //img = loadImage("a.jpg");
   // JSONObject ligtLoc;
   
    //dataPort = new Serial(this, Serial.list()[2], 9600);
-   dataPort = new Serial(this, Serial.list()[2], 115200);
-  dataPort.bufferUntil('\n');
+   //dataPort = new Serial(this, Serial.list()[2], 115200);
+  //dataPort.bufferUntil('\n');
 
 //animation = new Animation(frameCSV, 12);
 //animation = new Animation(frameCSV1);
@@ -139,7 +149,7 @@ void setup() {
   // fishes = new Fishes();
   // particles = new Particles();
 
-  //serverHandler = new SocketHandle();
+  serverHandler = new SocketHandle();
 
   // lastSensorActivity = new ServerEvent();
 
@@ -176,17 +186,17 @@ void setup() {
 
 void draw () {
   ticker++;
-  lights.clearLights();
-  
-  //drawImage();
+  //lights.clearLights();
+  //newimage.imageDraw();
+  //newimage.render(lights);
 //animation.drawAnimation();
  //lights.animateBackground();
  
- animation.render(lights);
+ //animation.render(lights);
  
 // animation.drawAnimation();
  
-  lights.drawLights();
+  //lights.drawLights();
   //background(0);
   //lights.clearLights();
   //
@@ -340,646 +350,98 @@ void keyPressed() {
 }
 
 
-/*void drawImage(){
-  
-  mod = i%34;
-  
-  
-  Table table;
-  if(mod==0){
-  table = loadTable( lightsCSV, "header");
-  
-  for (TableRow row : table.rows()) {
-    color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      fill(c);
-      ellipse(x,y,10,10);
-      
-  }
-  
-  }
-  
-  if(mod==1){
-  table = loadTable( lightsCSV1, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
- 
-  }
-  
-  if(mod==2){
-  table = loadTable( lightsCSV1, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
- 
-  }
-  
-  
-  
-   if(mod==3){
-  table = loadTable( lightsCSV2, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==4){
-  table = loadTable( lightsCSV2, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==5){
-  table = loadTable( lightsCSV3, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==6){
-  table = loadTable( lightsCSV3, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-   if(mod==7){
-  table = loadTable( lightsCSV4, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  if(mod==8){
-  table = loadTable( lightsCSV4, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  
-   if(mod==9){
-  table = loadTable( lightsCSV5, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==10){
-  table = loadTable( lightsCSV5, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-   if(mod==11){
-  table = loadTable( lightsCSV6, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==12){
-  table = loadTable( lightsCSV6, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==13){
-  table = loadTable( lightsCSV7, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-   if(mod==14){
-  table = loadTable( lightsCSV7, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==15){
-  table = loadTable( lightsCSV8, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==16){
-  table = loadTable( lightsCSV8, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==17){
-  table = loadTable( lightsCSV9, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==18){
-  table = loadTable( lightsCSV9, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==19){
-  table = loadTable( lightsCSV10, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==20){
-  table = loadTable( lightsCSV10, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==21){
-  table = loadTable( lightsCSV11, "header");
-  for (TableRow row : table.rows()) {
-    color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==22){
-  table = loadTable( lightsCSV11, "header");
-  for (TableRow row : table.rows()) {
-    color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==23){
-  table = loadTable( lightsCSV12, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==24){
-  table = loadTable( lightsCSV12, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==25){
-  table = loadTable( lightsCSV13, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==26){
-  table = loadTable( lightsCSV13, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==27){
-  table = loadTable( lightsCSV14, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  
-  if(mod==28){
-  table = loadTable( lightsCSV14, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==29){
-  table = loadTable( lightsCSV15, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==30){
-  table = loadTable( lightsCSV15, "header");
-  for (TableRow row : table.rows()) {
-    color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==31){
-  table = loadTable( lightsCSV16, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==32){
-  table = loadTable( lightsCSV16, "header");
-  for (TableRow row : table.rows()) {
-     color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==33){
-  table = loadTable( lightsCSV17, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255,0,0);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  
-  if(mod==34){
-  table = loadTable( lightsCSV17, "header");
-  for (TableRow row : table.rows()) {
-      color c = color(255 ,255,255);
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-      int value = row.getInt("value");
-      
-      
-      
-      if(value==1){
-        fill(c);
-        ellipse(x,y,10,10);
-      }
-      
-  }
-  }
-  i++;
-}*/
 
+
+class  drawImage{
+  
+  PImage img;
+   Light[][] lights;
+ 
+    int mod1, mod2,n;
+    int dev1, dev2;
+drawImage(String aData, int fps1){
+   img = loadImage(aData);
+   println(img.height);
+   println(img.width);
+  loadPixels();
+  img.loadPixels();
+}
+  //println("pixel length :" + img.pixels.length);
+  
+ // println(img.height);
+   //println(img.width);
+ void imageDraw(){
+   n=0;
+  for (int y = 0; y < img.height; y++) {
+    mod2 = y % 55;
+    for (int x = 0; x < img.width; x++) {
+      int loc = x + y*img.width;
+      mod1 = x % 25;
+      // The functions red(), green(), and blue() pull out the 3 color components from a pixel.
+      float r = red(img.pixels[loc]);
+      float g = green(img.pixels[loc]);
+      float b = blue(img.pixels[loc]);
+      
+      // Image Processing would go here 
+      // If we were to change the RGB values, we would do it here, 
+      // before setting the pixel in the display window.
+      
+      // Set the display pixel to the image pixel
+      if(mod1 ==0 && mod2 ==0){
+        
+        println(r);
+      pixels[n] =  color(r,g,b); 
+     n++ ;
+      }      
+    }
+  }
+  
+  println(pixels.length);
+  updatePixels();
+  
+}
+
+void render(Lights l){
+  
+    n=0;
+  for (int y = 0; y < img.height; y++) {
+    mod2 = y % 55;
+    dev2 = floor(y/55);
+    for (int x = 0; x < img.width; x++) {
+      int loc = x + y*img.width;
+      mod1 = x % 25;
+      dev1 = floor(x/25);
+      // The functions red(), green(), and blue() pull out the 3 color components from a pixel.
+      float r = red(img.pixels[loc]);
+      float g = green(img.pixels[loc]);
+      float b = blue(img.pixels[loc]);
+      
+      // Image Processing would go here 
+      // If we were to change the RGB values, we would do it here, 
+      // before setting the pixel in the display window.
+      
+      // Set the display pixel to the image pixel
+      if(mod1 ==0 && mod2 ==0){
+        pixels[n] =  color(r,g,b); 
+        if(r !=255.0){
+            l.lights[dev2][dev1].intensity = 1.0;
+              l.lights[dev2][dev1].addRGBColor(true, 1.0);
+          
+        }else{
+           l.lights[dev2][dev1].intensity = random(0.4);
+              l.lights[dev2][dev1].addRGBColor(false, 1.0);
+        }
+      
+     n++ ;
+      }      
+    }
+  }
+  
+}
+
+
+
+}
 void readMessage(){
   
   message = dataPort.readStringUntil('\n');
@@ -1049,6 +511,9 @@ void drawText(){
 
 }
 
+
+
+
 class Animation {
   
   int r;
@@ -1073,6 +538,7 @@ class Animation {
     
   }
   
+
   void drawAnimation(){
     
    // int shift = (int)random(200);
