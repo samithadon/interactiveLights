@@ -14,9 +14,10 @@ public class SocketHandle {
   String server = "http://localhost:3000/toservers";
   //String server = "http://sonic.sg/toservers";
   Socket socket;
-
+  //Animation animation;
   // org.json.JSONObject evnt;
   Table table;
+  int eventCount =0;
 
   float id, count, activity;
   int eventBufferLen = 100;
@@ -45,7 +46,12 @@ public class SocketHandle {
        @Override
        public void call(Object... args) {
          addMessageWithEvent(args);
-         println("got message");
+         println("got message!");
+         if(eventCount ==4){
+           eventCount=0;
+         }
+         eventCount++;
+          println(eventCount);
        }
 
      }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
@@ -79,19 +85,50 @@ public class SocketHandle {
     //   e.printStackTrace();
     // }
 
-    if(evnt.has("sockid") && evnt.has("count")   && evnt.has("message")){
-      // println("in");
+    if( evnt.has("message") && evnt.has("csv")){
+      println("in");
       try{
-        String sockid;
-        int count, total;
+        //String sockid;
+        //int count, total;
+           String grid1 = "positions.csv";
+           String grid2 = "positions1.csv";
+           String grid3 = "positions2.csv";
+           String grid4 = "positions3.csv";
+           PrintWriter output=createWriter(grid1);
+           if(eventCount == 1){
+            output = createWriter(grid1);
+           }
+           if(eventCount == 2){
+            output = createWriter(grid2);
+           }
+           if(eventCount == 3){
+             output = createWriter(grid3);
+           }
+           if(eventCount == 4){
+            output = createWriter(grid4);
+           }
         String message;
-        sockid = evnt.optString("sockid", "");
-        count = evnt.optInt("count", 0);
+        String csv;
+       
+        //sockid = evnt.optString("sockid", "");
+        //count = evnt.optInt("count", 0);
        // total = evnt.optInt("total", 1);
         message = evnt.optString("message", "");
+        csv = evnt.optString("csv", "");
+        
+       // println(csv);
+         output.print(csv);
+         
+          output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+  
+  animation = new Animation(grid1, 50);
+  
+  //exit(); // Stops the program
+  
         if(message != null){
           // println(sockid, ", ", count, ", ", total, ", ", district);
-          addToEventQue(sockid, count, message);
+          //addToEventQue(sockid, count, message);
         }
       }catch(Exception je){
         println("JSON Exception");

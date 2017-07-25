@@ -9,7 +9,8 @@ PFont f;
 String frameCSV = "fireworks/frames.csv";
 String frameCSV1 = "fireflies/frames.csv";
 String frameCSV2 = "rays/frames.csv";
-String grid = "fireflies/grid2.csv";
+//String grid = "fireflies/grid2.csv";
+String grid = "positions.csv";
 String image = "a.jpg";
 String heart = "heart.jpg";
 
@@ -58,11 +59,11 @@ float factorK = 2.0;  // speed
 int sensorRadius = 10;
 
 // light stripes
-int numPDS = 1;
-//int numOfLines = 30;
-//int numOfPos = 30;
-int numOfLines = 7;
-int numOfPos = 44;
+int numPDS = 3;
+int numOfLines = 21;
+int numOfPos = 21;
+//int numOfLines = 7;
+//int numOfPos = 44;
 // test
 int testBG = 0;
 float kickSize, snareSize, hatSize;
@@ -73,8 +74,8 @@ int lastSensrX = 0, lastSensrY = 0;
 int countWave=0;
 
 
-String[] ipPDSs = {"10.0.39.108"};
-int[] pdsCap = { 6};
+String[] ipPDSs = {"10.0.39.108","10.0.39.109","10.0.39.110"};
+int[] pdsCap = { 8,8,5};
 // String ipPDS2 = "10.3.100.101";
 
 // socket handler for server communication
@@ -122,16 +123,16 @@ void setup() {
   PDS = new P5_KiNET(this);
 
   pdsColorsSend = new Color[numOfPos];
-  lights = new Lights(grid,20);
-  newimage = new drawImage(image,20);
-  
+  lights = new Lights(grid,100);
+  //newimage = new drawImage(image,20);
+   animation = new Animation(grid, 100);
   //animation = new Animation(frameCSV1, 10);
 //animation = new Animation(frameCSV1,10);
 //animation = new Animation(frameCSV2,15);
  // lights = new Lights(grid,10);
 
   frameRate(fps);
-  size(int(22) ,13);
+  size(int(600) ,600);
   //img = loadImage("a.jpg");
   // JSONObject ligtLoc;
   
@@ -186,7 +187,7 @@ void setup() {
 
 void draw () {
   ticker++;
-  //lights.clearLights();
+  lights.clearLights();
   //newimage.imageDraw();
   //newimage.render(lights);
 //animation.drawAnimation();
@@ -194,7 +195,7 @@ void draw () {
  
  //animation.render(lights);
  
-// animation.drawAnimation();
+ animation.drawAnimation();
  
   //lights.drawLights();
   //background(0);
@@ -517,6 +518,7 @@ void drawText(){
 class Animation {
   
   int r;
+  int test;
    int rows;
    int columns;
   Light[][] lights;
@@ -534,6 +536,7 @@ class Animation {
     rows = table.getRowCount();
     columns = table.getColumnCount();
     println(columns);
+      println(rows);
     
     
   }
@@ -542,36 +545,46 @@ class Animation {
   void drawAnimation(){
     
    // int shift = (int)random(200);
-    println(shift);
+   // println(shift);
     if(count> columns-5){
       count=3;
       //shift = 22;
     }
     
     for(int i =0; i<=count ; i++){
-    println("count =" + count);
-    println("i =" + i);
+    //println("count =" + count);
+    //println("i =" + i);
     for (TableRow row : table.rows()) {
      // if(count=3){
       //color c = color(0 ,0,0);
      // }else{
        // color c = color(0 ,0,0);
      // }
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
+      int x = row.getInt("x");
+      int y = row.getInt("y");
+     String numberA = String.valueOf(i*100);
+     //int value=0;
       //println(i);
-      int value = row.getInt("f" + i);
-      
-      
+      //if(i*100 < columns){
+        test = i*100;
+       if (test>((columns-5)*20)){
+         numberA = String.valueOf((columns-5)*20);
+         break;
+       }
+        
+        //if (test <rows){
+      int value = row.getInt(numberA);
+       // }
+      //}
       
       if(value==1){
         
-        color c = color(255,0,100);
+        color c = color(255,0,0);
         fill(c);
         //if(value==0){
         //ellipse(x,y,5,5);
         //}else{
-          ellipse(x+shift,y,5,5);
+          ellipse(x,y,5,5);
         //}
         
       }else{

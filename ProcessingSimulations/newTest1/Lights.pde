@@ -22,7 +22,7 @@ class Lights {
     fps = fps1;
     //println(numOfLines);
      //println(numOfPos);
-    lights = new Light[13][22];
+    lights = new Light[21][21];
     // lightLenghts = new int[numOfLines];
     table = loadTable(pointData, "header");
     //int y = 0;
@@ -31,9 +31,9 @@ class Lights {
       //int pds = row.getInt("pds");
       // println(pds);
       
-       int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
-       PVector pLoc = new PVector(y,x);
+       int x = row.getInt("x");
+      int y = row.getInt("y");
+       PVector pLoc = new PVector(x,y);
        
        int i = row.getInt("i");
        int j = row.getInt("j");
@@ -43,24 +43,24 @@ class Lights {
        //println("X =" + x);
        //y = (y-5)/22;
        //println("Y =" + y);
-       //int pds = floor(i/8); // uncomment this line for real simulations
+      int pds = floor(i/8); // uncomment this line for real simulations
         //println("pds =" + pds);
-       //int lightStrand = i%8; // uncomment this line for real simulation
+       int lightStrand = i%8; // uncomment this line for real simulation
         //println("lightStarnd =" + lightStrand);
-        int pds =0;
-        int lightStrand = floor(i/2);
+        //int pds =0;
+        //int lightStrand = floor(i/2);
         
        // println("lightStrand=" +lightStrand);
-        if((i%2)==0){
+        //if((i%2)==0){
           
         Light light = new Light(pLoc, pds, lightStrand, j);
        lights[i][j] = light;
-        }else{
+        //}else{
           
-           Light light = new Light(pLoc, pds, lightStrand, j+22);
-       lights[i][21-j] = light;
+          // Light light = new Light(pLoc, pds, lightStrand, j+22);
+       //lights[i][21-j] = light;
           
-        }
+       // }
         
         
        //modTemp = x%2;
