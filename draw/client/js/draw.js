@@ -221,7 +221,6 @@ window.onload = function() {
     canvMgr.link_to_animation(drawing); // TODO kinda hacky
 
     var messageInput = document.getElementById('message');
-    var localIPInput = document.getElementById('localIP');
    
     function clear() {
         canvMgr.clear();
@@ -231,7 +230,6 @@ window.onload = function() {
 
     function submit() {
         var msg = messageInput.value;
-        var localIP = localIPInput.value;
         var csv = drawing.get_csv();
         // need id, count of msgs sent, message is csv
         var data = { message: msg,csv:csv };
