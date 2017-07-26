@@ -10,7 +10,7 @@ String frameCSV = "fireworks/frames.csv";
 String frameCSV1 = "fireflies/frames.csv";
 String frameCSV2 = "rays/frames.csv";
 //String grid = "fireflies/grid2.csv";
-String grid = "positions.csv";
+String grid = "positions1.csv";
 String image = "a.jpg";
 String heart = "heart.jpg";
 
