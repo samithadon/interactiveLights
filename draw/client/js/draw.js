@@ -297,18 +297,11 @@ window.onload = function() {
     function submit() {
         var msg = messageInput.value;
         var csv = drawing.get_csv();
-        // need id, count of msgs sent, message is csv
         var data = { message: msg,csv:csv };
-        // http://192.168.43.119/login
         console.log('socket emitting csvAnm with data', data);
         socket.emit("csvAnm",data, function(d) {
             console.log('got socket reply back', d);
         });
-
-
-
-
-        // TODO send the animation to the display
         clear();
     }   
 
