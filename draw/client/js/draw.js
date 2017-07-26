@@ -101,7 +101,21 @@ var animation = function(canv) {
         return i*(max_ij[1] + 1) + j;
     }
 
-    // INITIALIZATION
+    // get all the times we have frames for
+    function get_all_frame_times() {
+        var times_as_strings = _.keys(a.frames);
+        var times_as_numbers = _.map(times_as_strings, function(t) {
+            return JSON.parse(t);
+        });
+        var times_sorted = _.sortBy(times_as_numbers, function(t) {
+            return t;
+        });
+        return times_sorted;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    // INITIALIZATION /////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
     // __a__ stores the animation as the user creates it
     // we also add a first 'frame' at t='0' where it is all 0's
     // (leave headers off for now)
@@ -115,7 +129,7 @@ var animation = function(canv) {
     //      JSON.stringify(t2) : [ 0 or 1 for each grid point ], 
     //      ...
     // }
-    var T = 0;
+    var T = 0; // times for a.frames
     var a = {};
     function init() { // TODO i think something fishy is happening with scope here, overwriting a is not working
         console.log('animation init');
@@ -140,6 +154,10 @@ var animation = function(canv) {
         console.log('initialized a', a);
     }
     init();
+
+    ////////////////////////////////////////////////////////////////////////
+    // UPDATING ANIMATION AS USERS DRAW ///////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
 
     // as people draw on canvas, immediately add points to queue
     // this queue will periodically get added to the animation frames
@@ -173,15 +191,12 @@ var animation = function(canv) {
         });
     }, dt);
 
+    ///////////////////////////////////////////////////////////////////////
+    // CLEANING UP THE FRAMES BEFORE SENDING OUT THE CSV /////////////////
+    /////////////////////////////////////////////////////////////////////
+
     function remove_empty_frames_from_beginning_and_end() {
-        // get all the times we have frames for
-        var times_as_strings = _.keys(a.frames);
-        var times_as_numbers = _.map(times_as_strings, function(t) {
-            return JSON.parse(t);
-        });
-        var times = _.sortBy(times_as_numbers, function(t) {
-            return t;
-        });
+        var times = get_all_frame_times();
 
         // a helper function for use below
         // if the frame is empty (all 0's) returns true and sets the frame to null, else returns false
@@ -209,9 +224,9 @@ var animation = function(canv) {
             }
         }
 
+        // just keep the nonempty frames, starting time at 0 again
         var frames_copy = a.frames;
         a.frames = {};
-
         var t = 0;
         _.each(frames_copy, function(frame) {
             if (frame !== null) {
@@ -219,25 +234,7 @@ var animation = function(canv) {
                 t += dt;
             }
         });
-
     }
-
-    // every __dt__ ms, add the points in queue to an animatio frame
-    setInterval(function() {
-        var points = points_to_add;
-        points_to_add = [];
-
-        // create a new frame for the incoming points
-        T += dt;
-        a.frames[JSON.stringify(T)] = _.clone(a.frames[JSON.stringify(T-dt)]);
-
-        // add the points to the new frame
-        _.each(points, function(p) {
-            var i = p[0];
-            var j = p[1];
-            a.frames[JSON.stringify(T)][a_index(i,j)] = 1;
-        });
-    }, dt);
 
     function get_csv() {
         remove_empty_frames_from_beginning_and_end();
@@ -247,7 +244,7 @@ var animation = function(canv) {
 
         // first row of csv is the grid points x,y,i,j, then the times
         row = row.concat(headers);
-        row = row.concat(_.range(0,T+1,dt));
+        row = row.concat(get_all_frame_times());
         csv += row.join(',');
 
         // for each grid point
@@ -294,7 +291,7 @@ window.onload = function() {
     function clear() {
         canvMgr.clear();
         messageInput.value = '';
-        drawing.init();
+        //drawing.init();
     }
 
     function submit() {
