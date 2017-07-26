@@ -153,6 +153,73 @@ var animation = function(canv) {
         // draw on the grid
         var xy = grid_xy(ij[0],ij[1]);
         canv.dot(xy[0], xy[1], "#FF0000");
+
+    }
+
+    // every __dt__ ms, add the points in queue to an animatio frame
+    setInterval(function() {
+        var points = points_to_add;
+        points_to_add = [];
+
+        // create a new frame for the incoming points
+        T += dt;
+        a.frames[JSON.stringify(T)] = _.clone(a.frames[JSON.stringify(T-dt)]);
+
+        // add the points to the new frame
+        _.each(points, function(p) {
+            var i = p[0];
+            var j = p[1];
+            a.frames[JSON.stringify(T)][a_index(i,j)] = 1;
+        });
+    }, dt);
+
+    function remove_empty_frames_from_beginning_and_end() {
+        // get all the times we have frames for
+        var times_as_strings = _.keys(a.frames);
+        var times_as_numbers = _.map(times_as_strings, function(t) {
+            return JSON.parse(t);
+        });
+        var times = _.sortBy(times_as_numbers, function(t) {
+            return t;
+        });
+
+        // a helper function for use below
+        // if the frame is empty (all 0's) returns true and sets the frame to null, else returns false
+        function is_empty_also_nullify_if_empty(ti) {
+            var t = JSON.stringify(times[ti]);
+            if (_.max(a.frames[t]) == 0) {
+                a.frames[t] = null;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // from the beginning, set each frame to null if it contains all 0's
+        for (var ti = 0; ti < times.length; ti++) {
+            if(!is_empty_also_nullify_if_empty(times[ti])) {
+                break; // stop when we reach a nonempty frame
+            }
+        }
+
+        // from the end, set each frame to null if it contains all 0's
+        for (var ti = times.length-1; ti >= 0; ti--) {
+            if(!is_empty_also_nullify_if_empty(times[ti])) {
+                break; // stop when we reach a nonempty frame
+            }
+        }
+
+        var frames_copy = a.frames;
+        a.frames = {};
+
+        var t = 0;
+        _.each(frames_copy, function(frame) {
+            if (frame !== null) {
+                a.frames[JSON.stringify(t)] = frame;
+                t += dt;
+            }
+        });
+
     }
 
     // every __dt__ ms, add the points in queue to an animatio frame
@@ -173,6 +240,8 @@ var animation = function(canv) {
     }, dt);
 
     function get_csv() {
+        remove_empty_frames_from_beginning_and_end();
+
         var csv = '';
         var row = [];
 
@@ -221,7 +290,6 @@ window.onload = function() {
     canvMgr.link_to_animation(drawing); // TODO kinda hacky
 
     var messageInput = document.getElementById('message');
-    var localIPInput = document.getElementById('localIP');
    
     function clear() {
         canvMgr.clear();
@@ -231,7 +299,6 @@ window.onload = function() {
 
     function submit() {
         var msg = messageInput.value;
-        var localIP = localIPInput.value;
         var csv = drawing.get_csv();
         // need id, count of msgs sent, message is csv
         var data = { message: msg,csv:csv };
