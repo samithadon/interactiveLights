@@ -13,9 +13,10 @@ var CanvasManager = function(id) {
     context.lineWidth = 5;
 
     function dot(x,y,color) {
+        console.log('canvas dot with color', color);
         context.beginPath();
-        context.fillStyle = color;
-        context.strokeStyle = color;
+        context.fillStyle = '#'+color;
+        context.strokeStyle = '#'+color;
         context.arc(x,y,1,0,Math.PI*2,true);
         context.fill();
         context.stroke();
@@ -101,7 +102,21 @@ var animation = function(canv) {
         return i*(max_ij[1] + 1) + j;
     }
 
-    // INITIALIZATION
+    // get all the times we have frames for
+    function get_all_frame_times() {
+        var times_as_strings = _.keys(a.frames);
+        var times_as_numbers = _.map(times_as_strings, function(t) {
+            return JSON.parse(t);
+        });
+        var times_sorted = _.sortBy(times_as_numbers, function(t) {
+            return t;
+        });
+        return times_sorted;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    // INITIALIZATION /////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
     // __a__ stores the animation as the user creates it
     // we also add a first 'frame' at t='0' where it is all 0's
     // (leave headers off for now)
@@ -111,11 +126,11 @@ var animation = function(canv) {
     // a.i = [i1, i2, i3, ... ] i indices of all grid points
     // a.j = [j1, j2, j3, ... ] j indices of all grid points
     // a.frames = {
-    //      JSON.stringify(t1) : [ 0 or 1 for each grid point ],
-    //      JSON.stringify(t2) : [ 0 or 1 for each grid point ], 
+    //      JSON.stringify(t1) : [ 0 or the color hexcode for each grid point ],
+    //      JSON.stringify(t2) : [ 0 or the color hexcode for each grid point ],
     //      ...
     // }
-    var T = 0;
+    var T = 0; // times for a.frames
     var a = {};
     function init() { // TODO i think something fishy is happening with scope here, overwriting a is not working
         console.log('animation init');
@@ -133,6 +148,7 @@ var animation = function(canv) {
                 a.y.push(xy[1]);
                 a.i.push(i);
                 a.j.push(j);
+                console.log('about to call canv.dot for gray');
                 canv.dot(xy[0],xy[1],"#606060");
                 a.frames[JSON.stringify(T)].push(0);
             }
@@ -141,6 +157,10 @@ var animation = function(canv) {
     }
     init();
 
+    ////////////////////////////////////////////////////////////////////////
+    // UPDATING ANIMATION AS USERS DRAW ///////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+
     // as people draw on canvas, immediately add points to queue
     // this queue will periodically get added to the animation frames
     var points_to_add = [];
@@ -148,12 +168,18 @@ var animation = function(canv) {
         // x,y are the x,y from the canvas event. not aligned to grid yet
         // get the closest i,j grid point for x,y
         var ij = grid_ij(x,y);
-        points_to_add.push(ij);
+
+        var color = $('#colorpicker').val();
+
+        points_to_add.push({
+            i: ij[0],
+            j: ij[1],
+            color: color    
+        });
 
         // draw on the grid
         var xy = grid_xy(ij[0],ij[1]);
-        canv.dot(xy[0], xy[1], "#FF0000");
-
+        canv.dot(xy[0], xy[1], color);
     }
 
     // every __dt__ ms, add the points in queue to an animatio frame
@@ -167,21 +193,18 @@ var animation = function(canv) {
 
         // add the points to the new frame
         _.each(points, function(p) {
-            var i = p[0];
-            var j = p[1];
-            a.frames[JSON.stringify(T)][a_index(i,j)] = 1;
+            var i = p.i;
+            var j = p.j;
+            a.frames[JSON.stringify(T)][a_index(i,j)] = p.color;
         });
     }, dt);
 
+    ///////////////////////////////////////////////////////////////////////
+    // CLEANING UP THE FRAMES BEFORE SENDING OUT THE CSV /////////////////
+    /////////////////////////////////////////////////////////////////////
+
     function remove_empty_frames_from_beginning_and_end() {
-        // get all the times we have frames for
-        var times_as_strings = _.keys(a.frames);
-        var times_as_numbers = _.map(times_as_strings, function(t) {
-            return JSON.parse(t);
-        });
-        var times = _.sortBy(times_as_numbers, function(t) {
-            return t;
-        });
+        var times = get_all_frame_times();
 
         // a helper function for use below
         // if the frame is empty (all 0's) returns true and sets the frame to null, else returns false
@@ -209,9 +232,9 @@ var animation = function(canv) {
             }
         }
 
+        // just keep the nonempty frames, starting time at 0 again
         var frames_copy = a.frames;
         a.frames = {};
-
         var t = 0;
         _.each(frames_copy, function(frame) {
             if (frame !== null) {
@@ -219,25 +242,7 @@ var animation = function(canv) {
                 t += dt;
             }
         });
-
     }
-
-    // every __dt__ ms, add the points in queue to an animatio frame
-    setInterval(function() {
-        var points = points_to_add;
-        points_to_add = [];
-
-        // create a new frame for the incoming points
-        T += dt;
-        a.frames[JSON.stringify(T)] = _.clone(a.frames[JSON.stringify(T-dt)]);
-
-        // add the points to the new frame
-        _.each(points, function(p) {
-            var i = p[0];
-            var j = p[1];
-            a.frames[JSON.stringify(T)][a_index(i,j)] = 1;
-        });
-    }, dt);
 
     function get_csv() {
         remove_empty_frames_from_beginning_and_end();
@@ -247,7 +252,7 @@ var animation = function(canv) {
 
         // first row of csv is the grid points x,y,i,j, then the times
         row = row.concat(headers);
-        row = row.concat(_.range(0,T+1,dt));
+        row = row.concat(get_all_frame_times());
         csv += row.join(',');
 
         // for each grid point
@@ -300,18 +305,11 @@ window.onload = function() {
     function submit() {
         var msg = messageInput.value;
         var csv = drawing.get_csv();
-        // need id, count of msgs sent, message is csv
         var data = { message: msg,csv:csv };
-        // http://192.168.43.119/login
         console.log('socket emitting csvAnm with data', data);
         socket.emit("csvAnm",data, function(d) {
             console.log('got socket reply back', d);
         });
-
-
-
-
-        // TODO send the animation to the display
         clear();
     }   
 
@@ -322,6 +320,5 @@ window.onload = function() {
 
     var h_submit = new Hammer(document.getElementById('submit'));
     h_submit.on('tap', submit);
-   
 }
 
