@@ -101,20 +101,21 @@ var animation = function(canv) {
         return i*(max_ij[1] + 1) + j;
     }
 
-    // INITIALIZE A FOR ALL GRID POINTS
-    // and add a first 'frame' at t='0' where it is all 0's
-    // __a__ stores the animation in the format
+    // INITIALIZATION
+    // __a__ stores the animation as the user creates it
+    // we also add a first 'frame' at t='0' where it is all 0's
     // (leave headers off for now)
+    // format of __a__
     // a.x = [x1, x2, x3, ... ] x coords of all grid points
     // a.y = [y1, y2, y3, ... ] y coords of all grid points
     // a.i = [i1, i2, i3, ... ] i indices of all grid points
     // a.j = [j1, j2, j3, ... ] j indices of all grid points
-    // a.times = [t1, t2, ... ] for all the frames of the animation
     // a.frames = {
     //      JSON.stringify(t1) : [ 0 or 1 for each grid point ],
     //      JSON.stringify(t2) : [ 0 or 1 for each grid point ], 
     //      ...
     // }
+    var T = 0;
     var a = {};
     function init() { // TODO i think something fishy is happening with scope here, overwriting a is not working
         console.log('animation init');
@@ -122,11 +123,8 @@ var animation = function(canv) {
         _.each(headers, function(h) {
             a[h] = [];
         });
-        a.times = [];
         a.frames = {};
-        var t = 0;
-        a.times.push(t);
-        a.frames[JSON.stringify(t)] = [];
+        a.frames[JSON.stringify(T)] = [];
         for (var i = min_ij[0]; i <= max_ij[0]; i++) {
             // TODO i think j=min_ij[0] is a bug that just happens to work because the canvas is square, i think it should be j=min_ij[1]
             for (var j = min_ij[0]; j <= max_ij[0]; j++) {
@@ -136,7 +134,7 @@ var animation = function(canv) {
                 a.i.push(i);
                 a.j.push(j);
                 canv.dot(xy[0],xy[1],"#606060");
-                a.frames[JSON.stringify(t)].push(0);
+                a.frames[JSON.stringify(T)].push(0);
             }
         }
         console.log('initialized a', a);
@@ -163,34 +161,44 @@ var animation = function(canv) {
         points_to_add = [];
 
         // create a new frame for the incoming points
-        var t = _.last(a.times) + dt;
-        a.times.push(t);
-        a.frames[JSON.stringify(t)] = _.clone(a.frames[JSON.stringify(t-dt)]);
+        T += dt;
+        a.frames[JSON.stringify(T)] = _.clone(a.frames[JSON.stringify(T-dt)]);
 
         // add the points to the new frame
         _.each(points, function(p) {
             var i = p[0];
             var j = p[1];
-            a.frames[JSON.stringify(t)][a_index(i,j)] = 1;
+            a.frames[JSON.stringify(T)][a_index(i,j)] = 1;
         });
     }, dt);
 
     function get_csv() {
         var csv = '';
         var row = [];
+
+        // first row of csv is the grid points x,y,i,j, then the times
         row = row.concat(headers);
-        row = row.concat(a.times);
+        row = row.concat(_.range(0,T+1,dt));
         csv += row.join(',');
+
+        // for each grid point
         _.each(a.x, function(x, index) {
             row = [];
+
+            // record its x,y,i,j coordinates
             _.each(headers, function(h) {
                 row.push(a[h][index]);
             });
-            _.each(a.times, function(t) {
-                row.push(a.frames[JSON.stringify(t)][index]);
+
+            // record its changes over time
+            _.each(a.frames, function(frame) {
+                row.push(frame[index]);
             });
+
+            // add this as a row to the csv
             csv += '\n' + row.join(',');
         });
+
         return csv;
     }
 
