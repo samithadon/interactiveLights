@@ -172,7 +172,57 @@ var animation = function(canv) {
         });
     }, dt);
 
+    function remove_empty_frames_from_beginning_and_end() {
+        // get all the times we have frames for
+        var times_as_strings = _.keys(a.frames);
+        var times_as_numbers = _.map(times_as_strings, function(t) {
+            return JSON.parse(t);
+        });
+        var times = _.sortBy(times_as_numbers, function(t) {
+            return t;
+        });
+
+        // a helper function for use below
+        // if the frame is empty (all 0's) returns true and sets the frame to null, else returns false
+        function is_empty_also_nullify_if_empty(ti) {
+            var t = JSON.stringify(times[ti]);
+            if (_.max(a.frames[t]) == 0) {
+                a.frames[t] = null;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // from the beginning, set each frame to null if it contains all 0's
+        for (var ti = 0; ti < times.length; ti++) {
+            if(!is_empty_also_nullify_if_empty(times[ti])) {
+                break; // stop when we reach a nonempty frame
+            }
+        }
+
+        // from the end, set each frame to null if it contains all 0's
+        for (var ti = times.length-1; ti >= 0; ti--) {
+            if(!is_empty_also_nullify_if_empty(times[ti])) {
+                break; // stop when we reach a nonempty frame
+            }
+        }
+
+        var frames_copy = a.frames;
+        a.frames = {};
+
+        var t = 0;
+        _.each(frames_copy, function(frame) {
+            if (frame !== null) {
+                a.frames[JSON.stringify(t)] = frame;
+                t += dt;
+            }
+        });
+    }
+
     function get_csv() {
+        remove_empty_frames_from_beginning_and_end();
+
         var csv = '';
         var row = [];
 
