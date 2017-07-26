@@ -291,7 +291,7 @@ window.onload = function() {
     function clear() {
         canvMgr.clear();
         messageInput.value = '';
-        //drawing.init();
+        drawing.init();
     }
 
     function submit() {
