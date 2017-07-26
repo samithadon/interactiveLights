@@ -13,9 +13,10 @@ var CanvasManager = function(id) {
     context.lineWidth = 5;
 
     function dot(x,y,color) {
+        console.log('canvas dot with color', color);
         context.beginPath();
-        context.fillStyle = color;
-        context.strokeStyle = color;
+        context.fillStyle = '#'+color;
+        context.strokeStyle = '#'+color;
         context.arc(x,y,1,0,Math.PI*2,true);
         context.fill();
         context.stroke();
@@ -125,8 +126,8 @@ var animation = function(canv) {
     // a.i = [i1, i2, i3, ... ] i indices of all grid points
     // a.j = [j1, j2, j3, ... ] j indices of all grid points
     // a.frames = {
-    //      JSON.stringify(t1) : [ 0 or 1 for each grid point ],
-    //      JSON.stringify(t2) : [ 0 or 1 for each grid point ], 
+    //      JSON.stringify(t1) : [ 0 or the color hexcode for each grid point ],
+    //      JSON.stringify(t2) : [ 0 or the color hexcode for each grid point ],
     //      ...
     // }
     var T = 0; // times for a.frames
@@ -147,6 +148,7 @@ var animation = function(canv) {
                 a.y.push(xy[1]);
                 a.i.push(i);
                 a.j.push(j);
+                console.log('about to call canv.dot for gray');
                 canv.dot(xy[0],xy[1],"#606060");
                 a.frames[JSON.stringify(T)].push(0);
             }
@@ -166,12 +168,18 @@ var animation = function(canv) {
         // x,y are the x,y from the canvas event. not aligned to grid yet
         // get the closest i,j grid point for x,y
         var ij = grid_ij(x,y);
-        points_to_add.push(ij);
+
+        var color = $('#colorpicker').val();
+
+        points_to_add.push({
+            i: ij[0],
+            j: ij[1],
+            color: color    
+        });
 
         // draw on the grid
         var xy = grid_xy(ij[0],ij[1]);
-        canv.dot(xy[0], xy[1], "#FF0000");
-
+        canv.dot(xy[0], xy[1], color);
     }
 
     // every __dt__ ms, add the points in queue to an animatio frame
@@ -185,9 +193,9 @@ var animation = function(canv) {
 
         // add the points to the new frame
         _.each(points, function(p) {
-            var i = p[0];
-            var j = p[1];
-            a.frames[JSON.stringify(T)][a_index(i,j)] = 1;
+            var i = p.i;
+            var j = p.j;
+            a.frames[JSON.stringify(T)][a_index(i,j)] = p.color;
         });
     }, dt);
 
@@ -312,6 +320,5 @@ window.onload = function() {
 
     var h_submit = new Hammer(document.getElementById('submit'));
     h_submit.on('tap', submit);
-   
 }
 
