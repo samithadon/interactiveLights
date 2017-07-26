@@ -101,40 +101,32 @@ var animation = function(canv) {
         return i*(max_ij[1] + 1) + j;
     }
 
-    // we only care about time to the granularity of dt
-    var start = Date.now();
-    function grid_t(t) {
-        return Math.floor((t - start)/dt) * dt;
-    }
-
-    // INITIALIZE A FOR ALL GRID POINTS
-    // and add a first 'frame' at t='0' where it is all 0's
-    // __a__ stores the animation in the format
+    // INITIALIZATION
+    // __a__ stores the animation as the user creates it
+    // we also add a first 'frame' at t='0' where it is all 0's
     // (leave headers off for now)
+    // format of __a__
     // a.x = [x1, x2, x3, ... ] x coords of all grid points
     // a.y = [y1, y2, y3, ... ] y coords of all grid points
     // a.i = [i1, i2, i3, ... ] i indices of all grid points
     // a.j = [j1, j2, j3, ... ] j indices of all grid points
-    // a.times = [t1, t2, ... ] for all the frames of the animation
     // a.frames = {
     //      JSON.stringify(t1) : [ 0 or 1 for each grid point ],
     //      JSON.stringify(t2) : [ 0 or 1 for each grid point ], 
     //      ...
     // }
+    var T = 0;
     var a = {};
     function init() { // TODO i think something fishy is happening with scope here, overwriting a is not working
         console.log('animation init');
-        start = Date.now();
         a = {};
         _.each(headers, function(h) {
             a[h] = [];
         });
-        a.times = [];
         a.frames = {};
-        var t = grid_t(start);
-        a.times.push(t);
-        a.frames[JSON.stringify(t)] = [];
+        a.frames[JSON.stringify(T)] = [];
         for (var i = min_ij[0]; i <= max_ij[0]; i++) {
+            // TODO i think j=min_ij[0] is a bug that just happens to work because the canvas is square, i think it should be j=min_ij[1]
             for (var j = min_ij[0]; j <= max_ij[0]; j++) {
                 var xy = grid_xy(i,j);            
                 a.x.push(xy[0]);
@@ -142,56 +134,71 @@ var animation = function(canv) {
                 a.i.push(i);
                 a.j.push(j);
                 canv.dot(xy[0],xy[1],"#606060");
-                a.frames[JSON.stringify(t)].push(0);
+                a.frames[JSON.stringify(T)].push(0);
             }
         }
         console.log('initialized a', a);
     }
     init();
 
-    // ADD INCOMING FRAMES AS PEOPLE DRAW ON CANVAS
+    // as people draw on canvas, immediately add points to queue
+    // this queue will periodically get added to the animation frames
+    var points_to_add = [];
     function add_point(x,y) {
-        var new_t = grid_t(Date.now());
-        var old_t = _.last(a.times);
+        // x,y are the x,y from the canvas event. not aligned to grid yet
+        // get the closest i,j grid point for x,y
         var ij = grid_ij(x,y);
-        var i = ij[0];
-        var j = ij[1];
-        // if points occur within dt ms of each other, group them together
-        if (new_t - old_t < dt) {
-            a.frames[JSON.stringify(old_t)][a_index(i,j)] = 1;
-            return;
-        }
-        // if a longer gap between points, fill in missing frames in between
-        var ts = _.range(old_t + dt, new_t, dt);
-        _.each(ts, function(t) {
-            a.times.push(t);
-            a.frames[JSON.stringify(t)] = _.clone(a.frames[JSON.stringify(t-dt)]);
-        });
-        // then add a new frame for the latest time
-        a.times.push(new_t);
-        a.frames[JSON.stringify(new_t)] = _.clone(a.frames[JSON.stringify(new_t-dt)]);
-        a.frames[JSON.stringify(new_t)][a_index(i,j)] = 1;
+        points_to_add.push(ij);
+
         // draw on the grid
-        var gridxy = grid_xy(i,j);
-        canv.dot(gridxy[0], gridxy[1], "#FF0000");
+        var xy = grid_xy(ij[0],ij[1]);
+        canv.dot(xy[0], xy[1], "#FF0000");
     }
+
+    // every __dt__ ms, add the points in queue to an animatio frame
+    setInterval(function() {
+        var points = points_to_add;
+        points_to_add = [];
+
+        // create a new frame for the incoming points
+        T += dt;
+        a.frames[JSON.stringify(T)] = _.clone(a.frames[JSON.stringify(T-dt)]);
+
+        // add the points to the new frame
+        _.each(points, function(p) {
+            var i = p[0];
+            var j = p[1];
+            a.frames[JSON.stringify(T)][a_index(i,j)] = 1;
+        });
+    }, dt);
 
     function get_csv() {
         var csv = '';
         var row = [];
+
+        // first row of csv is the grid points x,y,i,j, then the times
         row = row.concat(headers);
-        row = row.concat(a.times);
+        row = row.concat(_.range(0,T+1,dt));
         csv += row.join(',');
+
+        // for each grid point
         _.each(a.x, function(x, index) {
             row = [];
+
+            // record its x,y,i,j coordinates
             _.each(headers, function(h) {
                 row.push(a[h][index]);
             });
-            _.each(a.times, function(t) {
-                row.push(a.frames[JSON.stringify(t)][index]);
+
+            // record its changes over time
+            _.each(a.frames, function(frame) {
+                row.push(frame[index]);
             });
+
+            // add this as a row to the csv
             csv += '\n' + row.join(',');
         });
+
         return csv;
     }
 
