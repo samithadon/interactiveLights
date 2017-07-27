@@ -331,15 +331,13 @@ window.onload = function() {
    
     function clear() {
         //canvMgr.clear();
-        //messageInput.value = '';
         location.reload();
         // TODO canvMgr.clear() for some reason does not really clear out the animation.... not sure why!! do not want to spend any more time debugging it given the current project timeline. so just reloading the whole page as a workaround... 
     }
 
     function submit() {
-        var msg = messageInput.value;
         var csv = canvMgr.get_csv();
-        var data = { message: msg,csv:csv };
+        var data = { message: 'empty message', csv:csv };
         console.log('socket emitting csvAnm with data', data);
         socket.emit("csvAnm",data, function(d) {
             console.log('got socket reply back', d);
