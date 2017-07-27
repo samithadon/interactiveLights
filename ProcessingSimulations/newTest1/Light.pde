@@ -20,7 +20,7 @@ class Light {
     this.positionID = positionID;
     //this.district = district;
     this.intensity = 0.01;
-    this.addRGBColor(true, 1.0);
+    this.addrgbColor(255,255,255, 1.0);
   }
 
  /* Light(TableRow row) {
@@ -38,6 +38,37 @@ class Light {
   }
 
   //Converts intensity to color
+  void addrgbColor (int r, int g, int b, float maxIntensity) {
+    float hue, sat, bright;
+
+    intensity = map (intensity, 0.0, maxIntensity, 0.05, 1.0);
+    intensity = exponentialEasing (intensity, 0.4);
+
+   /* if (isPrey == false) {
+      hue = map (intensity, 0.0, 1.0, 1.0, 0.5);
+      // sat = map (intensity, 0.0, 1.0, 1.0, 1.0);
+      sat = 1.0;
+      bright = map (intensity, 0.0, 1.0, 0.1, 1.0);
+    }
+    else {
+      hue = map (intensity, 0.0, 1.0, 0, 0);
+      // hue = 0.0;
+      // sat = 1.0;
+      sat = map (intensity, 0.0, 1.0, 0.5, 1.0);
+      bright = map (intensity, 0.0, 1.0, 0.1, 1.0);
+    }*/
+
+    intensity = 0;
+   // Color hsbColor = Color.getHSBColor(hue, sat, bright);
+
+    //red = constrain(hsbColor.getRed(), 0, 255);
+  red =r;
+    //green = constrain(hsbColor.getGreen(), 0, 255);
+    green =g;
+    //blue = constrain(hsbColor.getBlue(), 0, 255);
+  blue =b;
+  }
+  
   void addRGBColor (boolean isPrey, float maxIntensity) {
     float hue, sat, bright;
 
@@ -62,8 +93,11 @@ class Light {
     Color hsbColor = Color.getHSBColor(hue, sat, bright);
 
     red = constrain(hsbColor.getRed(), 0, 255);
+  // red =0;
     green = constrain(hsbColor.getGreen(), 0, 255);
+   // green =255;
     blue = constrain(hsbColor.getBlue(), 0, 255);
+  // blue =0;
   }
 
   void setColor(LightIntensity li){
@@ -72,7 +106,7 @@ class Light {
     // blue = 0;
     // this.intensity = max(li.intensity, 0.1);
     this.intensity = li.intensity;
-    this.addRGBColor(li.type, li.max);
+    //this.addRGBColor(li.type, li.max);
   }
 
   //Shaping Function
@@ -101,7 +135,7 @@ class Light {
     green = 0;
     blue = 0;
     intensity = 0.02;
-    addRGBColor(true, 1.0);
+   // addRGBColor(true, 1.0);
   }
 
   void clearRGBReset() {

@@ -130,7 +130,7 @@ class Lights {
       for(int j=0; j < lights[i].length; j++){
         //if(lights[i][j].district > 0){
           lights[i][j].intensity = 3.0;
-          lights[i][j].addRGBColor(true, 3.0);
+          //lights[i][j].addRGBColor(true, 3.0);
         //}
       }
     }
@@ -149,7 +149,7 @@ class Lights {
 
   void drawLight(int x, int y, float inten) {
     lights[y][x].intensity = inten;
-    lights[y][x].addRGBColor(false, 1.0);
+    //lights[y][x].addRGBColor(false, 1.0);
   }
 
   void clearLightsReset() {
@@ -171,7 +171,7 @@ class Lights {
          //if(modTemp==0 && modTemp1 == 0){
            // println("j" +lights[i][j] );
          lights[i][j].intensity = random(0.4);
-          lights[i][j].addRGBColor(false, 1.0);
+          //lights[i][j].addRGBColor(false, 1.0);
          //}
       }
     }
@@ -183,7 +183,7 @@ class Lights {
     for(int i=0; i< lights.length; i++){
       if(testIndex < lights[i].length){
         lights[i][testIndex].intensity = 1.0;
-        lights[i][testIndex].addRGBColor(false, 1.0);
+       // lights[i][testIndex].addRGBColor(false, 1.0);
       }
     }
     testIndex++;
@@ -195,7 +195,7 @@ class Lights {
     for(int i=0; i< lights.length; i++){
       if(indx < lights[i].length){
         lights[i][indx].intensity = 1.0;
-        lights[i][indx].addRGBColor(false, 1.0);
+      //  lights[i][indx].addRGBColor(false, 1.0);
       }
     }
   }
@@ -205,7 +205,7 @@ class Lights {
     if(indx < lights.length){
       for(int i=0; i < lights[indx].length; i++){
         lights[indx][i].intensity = 1.0;
-        lights[indx][i].addRGBColor(false, 1.0);
+       // lights[indx][i].addRGBColor(false, 1.0);
       }
     }
   }

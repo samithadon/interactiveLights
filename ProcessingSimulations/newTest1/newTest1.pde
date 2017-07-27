@@ -10,7 +10,10 @@ String frameCSV = "fireworks/frames.csv";
 String frameCSV1 = "fireflies/frames.csv";
 String frameCSV2 = "rays/frames.csv";
 //String grid = "fireflies/grid2.csv";
-String grid = "positions1.csv";
+ String grid1 = "positions.csv";
+ String grid2 = "positions1.csv";
+ String grid3 = "positions2.csv";
+ String grid4 = "positions3.csv";
 String image = "a.jpg";
 String heart = "heart.jpg";
 
@@ -123,9 +126,9 @@ void setup() {
   PDS = new P5_KiNET(this);
 
   pdsColorsSend = new Color[numOfPos];
-  lights = new Lights(grid,100);
+  lights = new Lights(grid2,100);
   //newimage = new drawImage(image,20);
-   animation = new Animation(grid, 100);
+   animation = new Animation(grid1, grid2, grid3, grid4, 100);
   //animation = new Animation(frameCSV1, 10);
 //animation = new Animation(frameCSV1,10);
 //animation = new Animation(frameCSV2,15);
@@ -193,11 +196,11 @@ void draw () {
 //animation.drawAnimation();
  //lights.animateBackground();
  
- //animation.render(lights);
+ animation.render(lights);
  
- animation.drawAnimation();
+ //animation.drawAnimation();
  
-  //lights.drawLights();
+  lights.drawLights();
   //background(0);
   //lights.clearLights();
   //
@@ -426,11 +429,11 @@ void render(Lights l){
         pixels[n] =  color(r,g,b); 
         if(r !=255.0){
             l.lights[dev2][dev1].intensity = 1.0;
-              l.lights[dev2][dev1].addRGBColor(true, 1.0);
+              //l.lights[dev2][dev1].addRGBColor(true, 1.0);
           
         }else{
            l.lights[dev2][dev1].intensity = random(0.4);
-              l.lights[dev2][dev1].addRGBColor(false, 1.0);
+              //l.lights[dev2][dev1].addRGBColor(false, 1.0);
         }
       
      n++ ;
@@ -521,22 +524,25 @@ class Animation {
   int test;
    int rows;
    int columns;
+   int interaction=0;
   Light[][] lights;
   int red, green, blue;
-  Table table;
+  Table table, table1,table2, table3, table4;
   int count=3;
   int mod =0;
   int shift=0;
   
-  Animation(String aData, int fps1){
+  Animation(String aData, String bData, String cData, String dData, int fps1){
     
     fps= fps1;
-    table = loadTable( aData, "header");
-    
-    rows = table.getRowCount();
-    columns = table.getColumnCount();
-    println(columns);
-      println(rows);
+    table1 = loadTable( aData, "header");
+     table2 = loadTable( bData, "header");
+      table3 = loadTable( cData, "header");
+       table4 = loadTable( dData, "header");
+    //rows = table.getRowCount();
+    //columns = table.getColumnCount();
+    //println(columns);
+     // println(rows);
     
     
   }
@@ -548,7 +554,37 @@ class Animation {
    // println(shift);
     if(count> columns-5){
       count=3;
+      interaction++;
+      if(interaction==3){
+        interaction =0;
+      }
       //shift = 22;
+    }
+    
+    if(interaction ==0){
+      table = table1;
+      
+      rows = table.getRowCount();
+    columns = table.getColumnCount();
+      
+    }else if(interaction ==1){
+      table = table2;
+      
+      rows = table.getRowCount();
+    columns = table.getColumnCount();
+      
+    }else if(interaction ==2){
+      table = table3;
+      
+      rows = table.getRowCount();
+    columns = table.getColumnCount();
+      
+    }else if(interaction ==3){
+      table = table4;
+      
+      rows = table.getRowCount();
+    columns = table.getColumnCount();
+      
     }
     
     for(int i =0; i<=count ; i++){
@@ -609,8 +645,37 @@ class Animation {
        // println(shift);
     if(count> columns-5){
       count=3;
-      shift = (int)random(-8,8);
-      println("shift" + shift);
+       interaction++;
+      if(interaction==3){
+        interaction =0;
+      }
+      shift = 0;
+     // println("shift" + shift);
+    }
+    if(interaction ==0){
+      table = table1;
+      
+      rows = table.getRowCount();
+    columns = table.getColumnCount();
+      
+    }else if(interaction ==1){
+      table = table2;
+      
+      rows = table.getRowCount();
+    columns = table.getColumnCount();
+      
+    }else if(interaction ==2){
+      table = table3;
+      
+      rows = table.getRowCount();
+    columns = table.getColumnCount();
+      
+    }else if(interaction ==3){
+      table = table4;
+      
+      rows = table.getRowCount();
+    columns = table.getColumnCount();
+      
     }
     
     for(int i =0; i<=count ; i++){
@@ -622,17 +687,30 @@ class Animation {
      // }else{
        // color c = color(0 ,0,0);
      // }
-      int x = row.getInt("x")/2;
-      int y = row.getInt("y")/2;
+      int x = row.getInt("x");
+      int y = row.getInt("y");
       
        int m = row.getInt("i");
        int n = row.getInt("j");
       //println(i);
-      int value = row.getInt("f" + i);
-      
-      
-      
-      if(value==1){
+      String numberA = String.valueOf(i*100);
+     //int value=0;
+      //println(i);
+      //if(i*100 < columns){
+        test = i*100;
+       if (test>((columns-5)*20)){
+         numberA = String.valueOf((columns-5)*20);
+         break;
+       }
+        
+        //if (test <rows){
+      String hexValue = row.getString(numberA);
+      int value  = unhex(hexValue);
+       int r = (int)red(value);
+      int g = (int)green(value);
+      int b = (int)blue(value);
+  
+      if(value !=0){
         
         //color c = color(255,0,100);
         //fill(c);
@@ -642,11 +720,11 @@ class Animation {
           //ellipse(x+shift,y,5,5);
           if(m+shift < 30 && n+shift < 30 && m+shift > 0 && n+shift >0 ){
               l.lights[m+shift][n+shift].intensity = 1.0;
-              l.lights[m+shift][n+shift].addRGBColor(true, 1.0);
+              l.lights[m+shift][n+shift].addrgbColor(r,g,b, 1.0);
           }else{
              
                 l.lights[m][n].intensity =1.0;
-              l.lights[m][n].addRGBColor(true, 1.0);
+              l.lights[m][n].addrgbColor(r,g,b, 1.0);
             
           }
         //}
@@ -659,7 +737,7 @@ class Animation {
         //ellipse(x,y,5,5);
          if(m+shift < 30 && n+shift < 30 && m+shift > 0 && n+shift >0 ){
          l.lights[m+shift][n+shift].intensity = random(0.4);
-          l.lights[m+shift][n+shift].addRGBColor(false, 1.0);
+           l.lights[m+shift][n+shift].addRGBColor(false, 1.0);
          }else{
             
              l.lights[m][n].intensity = random(0.4) ;
