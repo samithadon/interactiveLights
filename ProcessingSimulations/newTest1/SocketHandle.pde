@@ -99,13 +99,13 @@ public class SocketHandle {
             output = createWriter(grid1);
            }
            if(eventCount == 2){
-            output = createWriter(grid2);
+            output = createWriter(grid1);
            }
            if(eventCount == 3){
-             output = createWriter(grid3);
+             output = createWriter(grid1);
            }
            if(eventCount == 4){
-            output = createWriter(grid4);
+            output = createWriter(grid1);
            }
         String message;
         String csv;
@@ -122,7 +122,7 @@ public class SocketHandle {
           output.flush(); // Writes the remaining data to the file
   output.close(); // Finishes the file
   
-  animation = new Animation(grid1,grid2, grid3, grid4, 100);
+  animation = new Animation(grid1,grid1, grid1, grid1, 100);
   
   //exit(); // Stops the program
   

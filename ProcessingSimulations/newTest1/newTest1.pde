@@ -128,7 +128,7 @@ void setup() {
   pdsColorsSend = new Color[numOfPos];
   lights = new Lights(grid2,100);
   //newimage = new drawImage(image,20);
-   animation = new Animation(grid1, grid2, grid3, grid4, 100);
+   animation = new Animation(grid1, grid1, grid1, grid1, 100);
   //animation = new Animation(frameCSV1, 10);
 //animation = new Animation(frameCSV1,10);
 //animation = new Animation(frameCSV2,15);
