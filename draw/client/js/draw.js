@@ -344,7 +344,8 @@ window.onload = function() {
         socket.emit("csvAnm",data, function(d) {
             console.log('got socket reply back', d);
         });
-        clear();
+        $('#drawing-page').addClass('hide');
+        $('#feedback-page').removeClass('hide');
     }   
 
     // HOOK UP EVENT LISTENERS
