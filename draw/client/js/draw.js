@@ -330,8 +330,10 @@ window.onload = function() {
     var messageInput = document.getElementById('message');
    
     function clear() {
-        canvMgr.clear();
-        messageInput.value = '';
+        //canvMgr.clear();
+        //messageInput.value = '';
+        location.reload();
+        // TODO canvMgr.clear() for some reason does not really clear out the animation.... not sure why!! do not want to spend any more time debugging it given the current project timeline. so just reloading the whole page as a workaround... 
     }
 
     function submit() {
