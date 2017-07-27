@@ -1,19 +1,60 @@
-var CanvasManager = function(id) {
+function CanvasManager(canvas_id, colorpicker_id) {
     // thanks to https://gist.github.com/rjrodger/1011032
 
+    ///////////////////////////////////////////////////
+    // INITIALIZATION ////////////////////////////////
+    /////////////////////////////////////////////////
+    
+    // prevent touch event from scrolling, touch event events will draw instead
     document.ontouchmove = function(e){ e.preventDefault(); }
 
-    var canvas  = document.getElementById(id);
-    var canvastop = canvas.offsetTop
+    // create the canvas
+    var canvas  = document.getElementById(canvas_id);
     var context = canvas.getContext("2d");
 
+    // settings
     context.strokeStyle = "#000000";
     context.lineCap = 'round';
     context.lineJoin = 'round';
     context.lineWidth = 5;
 
+    // empty drawing for now, will create it later in 'clear' function
+    var drawing = null;
+
+    /////////////////////////////////////////////////////////////////
+    // EVENT HANDLERS //////////////////////////////////////////////
+    // draw dots and record animation in response to user touch ///
+    //////////////////////////////////////////////////////////////
+
+    function touch_handler(ev) {
+        ev.preventDefault();                 
+        var x = ev.touches[0].clientX;
+        var y = ev.touches[0].clientY - canvas.offsetTop;
+        var color = $('#' + colorpicker_id).val();
+        var gridpoints = drawing.record_point(x, y, color);
+        dot(gridpoints.x, gridpoints.y, color);
+    };
+
+    function mouse_handler(ev) {
+        if (ev.which != 1) return;
+        var x = ev.clientX;
+        var y = ev.clientY - canvas.offsetTop;
+        var color = $('#' + colorpicker_id).val();
+        var gridpoints = drawing.record_point(x, y, color);
+        dot(gridpoints.x, gridpoints.y, color);
+    };
+
+    canvas.ontouchstart = touch_handler;
+    canvas.ontouchmove = touch_handler;
+    canvas.onmousedown = mouse_handler;
+    canvas.onmousemove = mouse_handler;
+
+    /////////////////////////////////////////////
+    // HELPER FUNCTIONS ////////////////////////
+    // actually drawing stuff to the canvas ///
+    //////////////////////////////////////////
+
     function dot(x,y,color) {
-        console.log('canvas dot with color', color);
         context.beginPath();
         context.fillStyle = '#'+color;
         context.strokeStyle = '#'+color;
@@ -25,45 +66,32 @@ var CanvasManager = function(id) {
 
     function clear() {
         console.log('CanvasManager clear');
+
+        drawing = animation(canvas.width, canvas.height);
+
         context.fillStyle = "#ffffff";
         context.rect(0, 0, 300, 300);
         context.fill();
+        var grid = drawing.get_grid();
+        _.each(grid, function(p) {
+            dot(p.x, p.y, '606060');
+        });
     }
+
+    /////////////////////////////
+    // DRAW EMPTY CANVAS ///////
+    ///////////////////////////
+    
     clear();
-
-    function touch_handler(ev) {
-        ev.preventDefault();                 
-        var x = ev.touches[0].clientX;
-        var y = ev.touches[0].clientY - canvastop;
-        if (drw) drw.add_point(x, y);
-    };
-
-    function mouse_handler(ev) {
-        var x = ev.clientX;
-        var y = ev.clientY - canvastop;
-        if (drw && ev.which == 1) drw.add_point(x, y);
-    };
-
-    canvas.ontouchstart = touch_handler;
-    canvas.ontouchmove = touch_handler;
-    canvas.onmousedown = mouse_handler;
-    canvas.onmousemove = mouse_handler;
-
-    var drw = null;
-    function link_to_animation(a) {
-        drw = a;
-    }
 
     return {
         dot: dot,
         clear: clear,
-        link_to_animation: link_to_animation,
-        width: canvas.width,
-        height: canvas.height,
+        get_csv: drawing.get_csv,
     };
 }
 
-var animation = function(canv) {
+function animation(canvas_width, canvas_height) {
 
     /////////////////////////////////////////////
     // SETTINGS ////////////////////////////////
@@ -88,7 +116,7 @@ var animation = function(canv) {
         return [i,j];
     }
     var min_ij = grid_ij(0,0);
-    var max_ij = grid_ij(canv.width, canv.height);
+    var max_ij = grid_ij(canvas_width, canvas_height);
 
     // convert i,j to x,y
     function grid_xy(i,j) {
@@ -132,30 +160,24 @@ var animation = function(canv) {
     // }
     var T = 0; // times for a.frames
     var a = {};
-    function init() { // TODO i think something fishy is happening with scope here, overwriting a is not working
-        console.log('animation init');
-        a = {};
-        _.each(headers, function(h) {
-            a[h] = [];
-        });
-        a.frames = {};
-        a.frames[JSON.stringify(T)] = [];
-        for (var i = min_ij[0]; i <= max_ij[0]; i++) {
-            // TODO i think j=min_ij[0] is a bug that just happens to work because the canvas is square, i think it should be j=min_ij[1]
-            for (var j = min_ij[0]; j <= max_ij[0]; j++) {
-                var xy = grid_xy(i,j);            
-                a.x.push(xy[0]);
-                a.y.push(xy[1]);
-                a.i.push(i);
-                a.j.push(j);
-                console.log('about to call canv.dot for gray');
-                canv.dot(xy[0],xy[1],"#606060");
-                a.frames[JSON.stringify(T)].push(0);
-            }
+    console.log('animation init');
+    a = {};
+    _.each(headers, function(h) {
+        a[h] = [];
+    });
+    a.frames = {};
+    a.frames[JSON.stringify(T)] = [];
+    for (var i = min_ij[0]; i <= max_ij[0]; i++) {
+        for (var j = min_ij[1]; j <= max_ij[1]; j++) {
+            var xy = grid_xy(i,j);            
+            a.x.push(xy[0]);
+            a.y.push(xy[1]);
+            a.i.push(i);
+            a.j.push(j);
+            a.frames[JSON.stringify(T)].push(0);
         }
-        console.log('initialized a', a);
     }
-    init();
+    console.log('initialized a', a);
 
     ////////////////////////////////////////////////////////////////////////
     // UPDATING ANIMATION AS USERS DRAW ///////////////////////////////////
@@ -164,12 +186,10 @@ var animation = function(canv) {
     // as people draw on canvas, immediately add points to queue
     // this queue will periodically get added to the animation frames
     var points_to_add = [];
-    function add_point(x,y) {
+    function record_point(x, y, color) {
         // x,y are the x,y from the canvas event. not aligned to grid yet
         // get the closest i,j grid point for x,y
         var ij = grid_ij(x,y);
-
-        var color = $('#colorpicker').val();
 
         points_to_add.push({
             i: ij[0],
@@ -177,9 +197,8 @@ var animation = function(canv) {
             color: color    
         });
 
-        // draw on the grid
         var xy = grid_xy(ij[0],ij[1]);
-        canv.dot(xy[0], xy[1], color);
+        return {x: xy[0], y: xy[1]};
     }
 
     // every __dt__ ms, add the points in queue to an animatio frame
@@ -237,13 +256,18 @@ var animation = function(canv) {
         a.frames = {};
         var t = 0;
         _.each(frames_copy, function(frame) {
-            if (frame !== null) {
+            if (frame) {
                 a.frames[JSON.stringify(t)] = frame;
                 t += dt;
             }
         });
     }
 
+    ///////////////////////////////////////////////////////////////
+    // EXTERNAL FACING FUNCTIONS /////////////////////////////////
+    /////////////////////////////////////////////////////////////
+
+    // get the animation csv which is sent to processing
     function get_csv() {
         remove_empty_frames_from_beginning_and_end();
 
@@ -256,6 +280,7 @@ var animation = function(canv) {
         csv += row.join(',');
 
         // for each grid point
+        console.log('getting csv for a', a);
         _.each(a.x, function(x, index) {
             row = [];
 
@@ -276,35 +301,42 @@ var animation = function(canv) {
         return csv;
     }
 
+    // get all the points on the grid x, y, i, j
+    function get_grid() {
+        // makes an array of each point in the grid, for each point
+        return _.map(a.x, function(x, index) {
+            // store the headers x,y,i,j for that point in an object
+            var p = {};
+            _.each(headers, function(h) {
+                p[h] = a[h][index];
+            });
+            return p;
+        });
+    }
+
     return {
-        add_point: add_point,
+        record_point: record_point,
         get_csv: get_csv,
-        init: init,
-        // TODO remove this later
-        a: a,
+        get_grid: get_grid,
     };
 }
 
 window.onload = function() {
     var socket = io('/draw');
-
     console.log('socket', socket);
 
-    var canvMgr = CanvasManager('main');
-    var drawing = animation(canvMgr);
-    canvMgr.link_to_animation(drawing); // TODO kinda hacky
+    var canvMgr = CanvasManager('main', 'colorpicker');
 
     var messageInput = document.getElementById('message');
    
     function clear() {
         canvMgr.clear();
         messageInput.value = '';
-        drawing.init();
     }
 
     function submit() {
         var msg = messageInput.value;
-        var csv = drawing.get_csv();
+        var csv = canvMgr.get_csv();
         var data = { message: msg,csv:csv };
         console.log('socket emitting csvAnm with data', data);
         socket.emit("csvAnm",data, function(d) {

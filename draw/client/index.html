@@ -14,19 +14,26 @@
   </head> 
 
   <body>
-    <div>
-      <button id="clear" type="button" class="btn btn-default">Clear</button>
-      <input id="colorpicker" class="jscolor" value="cc66ff">
+
+    <div id="drawing-page">
+      <div>
+        <button id="clear" type="button" class="btn btn-default">Clear</button>
+        <input id="colorpicker" class="jscolor" value="cc66ff">
+      </div>
+      <div>
+        <canvas id="main" width="300" height="300"></canvas><br>
+      </div>
+      <div>
+        <input type="text" id="message" placeholder="share your thoughts">
+        <br/><br/>
+      </div>
+      <div>
+        <button id="submit" type="button" class="btn btn-default">Send</button>
+      </div>
     </div>
-    <div>
-      <canvas id="main" width="300" height="300"></canvas><br>
-    </div>
-    <div>
-      <input type="text" id="message" placeholder="share your thoughts">
-      <br/><br/>
-    </div>
-    <div>
-      <button id="submit" type="button" class="btn btn-default">Send</button>
+
+    <div id="feedback-page" class="hide">
+      <p>Please tell us about your experience...</p>
     </div>
 
     <!-- external js libraries -->
