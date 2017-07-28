@@ -339,12 +339,14 @@ window.onload = function() {
    
     // HOOK UP EVENT LISTENERS
 
+    // when the user taps the clear button
     (new Hammer(document.getElementById('clear'))).on('tap', function() {
         //canvMgr.clear();
         location.reload();
         // TODO canvMgr.clear() for some reason does not really clear out the animation.... not sure why!! do not want to spend any more time debugging it given the current project timeline. so just reloading the whole page as a workaround... 
     });
 
+    // when the user taps the submit-drawing button
     (new Hammer(document.getElementById('submit-drawing'))).on('tap', function() {
         var csv = canvMgr.get_csv();
         var data = { message: 'empty message', csv:csv };
@@ -356,10 +358,15 @@ window.onload = function() {
         $('#feedback-page').removeClass('hide');
     });
 
+    // when the user taps the submit-feedback button
     (new Hammer(document.getElementById('submit-feedback'))).on('tap', function () {
         var user_description = $('#feedback-describe').val();
         var user_location = $('#feedback-location').val();
-        console.log('got user description', user_description, 'user_location', user_location); 
+        var data = {description: user_description, place: user_location};
+        console.log('socket emitting feedback event with data', data);
+        socket.emit("feedback", data, function(d) {
+            console.log('got socket reply back', d);
+        });
     });
 }
 

@@ -22,11 +22,23 @@ fromDraw.on('connection', function(client) {
         toServers.emit('bdmsg', d);
 
         // record it locally
-        var record_name = get_user_record_name();
-        writeFile('user_data/animations/'+record_name+'.csv', d.csv)
-           .then(function() {
-              console.log('wrote animation to', record_name);
-           }); 
+        var filename = 'user_data/animations/'+get_user_record_name()+'.csv';
+        writeFile(filename, d.csv)
+            .then(function() {
+                console.log('wrote animation to', filename, '\n');
+            }); 
+    });
+
+    // when the client sends feedback
+    client.on('feedback', function(d) {
+        console.log('got user feedback event');
+
+        // record it locally
+        var filename = 'user_data/feedback/'+get_user_record_name()+'.json';
+        writeFile(filename, JSON.stringify(d))
+            .then(function() {
+                console.log('wrote feedback to', filename, '\n');
+            });
     });
 });
 
