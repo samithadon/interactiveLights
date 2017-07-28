@@ -359,6 +359,7 @@ window.onload = function() {
         socket.emit("feedback", data, function(d) {
             console.log('got socket reply back', d);
         });
+        location.reload();
     });
 }
 
