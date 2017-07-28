@@ -22,7 +22,7 @@ class Lights {
     fps = fps1;
     //println(numOfLines);
      //println(numOfPos);
-    lights = new Light[21][21];
+    lights = new Light[30][24];
     // lightLenghts = new int[numOfLines];
     table = loadTable(pointData, "header");
     //int y = 0;
@@ -43,9 +43,9 @@ class Lights {
        //println("X =" + x);
        //y = (y-5)/22;
        //println("Y =" + y);
-      int pds = floor(i/8); // uncomment this line for real simulations
+      int pds = floor(j/8); // uncomment this line for real simulations
         //println("pds =" + pds);
-       int lightStrand = i%8; // uncomment this line for real simulation
+       int lightStrand = j%8; // uncomment this line for real simulation
         //println("lightStarnd =" + lightStrand);
         //int pds =0;
         //int lightStrand = floor(i/2);
@@ -53,7 +53,7 @@ class Lights {
        // println("lightStrand=" +lightStrand);
         //if((i%2)==0){
           
-        Light light = new Light(pLoc, pds, lightStrand, j);
+        Light light = new Light(pLoc, pds, lightStrand, i);
        lights[i][j] = light;
         //}else{
           

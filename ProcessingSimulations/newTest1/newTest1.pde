@@ -63,8 +63,8 @@ int sensorRadius = 10;
 
 // light stripes
 int numPDS = 3;
-int numOfLines = 21;
-int numOfPos = 21;
+int numOfLines = 24;
+int numOfPos = 30;
 //int numOfLines = 7;
 //int numOfPos = 44;
 // test
@@ -78,7 +78,7 @@ int countWave=0;
 
 
 String[] ipPDSs = {"10.0.39.108","10.0.39.109","10.0.39.110"};
-int[] pdsCap = { 8,8,5};
+int[] pdsCap = { 8,8,8};
 // String ipPDS2 = "10.3.100.101";
 
 // socket handler for server communication
@@ -126,7 +126,7 @@ void setup() {
   PDS = new P5_KiNET(this);
 
   pdsColorsSend = new Color[numOfPos];
-  lights = new Lights(grid2,100);
+  lights = new Lights(grid1,100);
   //newimage = new drawImage(image,20);
    animation = new Animation(grid1, grid1, grid1, grid1, 100);
   //animation = new Animation(frameCSV1, 10);
@@ -200,7 +200,7 @@ void draw () {
  
  //animation.drawAnimation();
  
-  lights.drawLights();
+ lights.drawLights();
   //background(0);
   //lights.clearLights();
   //
