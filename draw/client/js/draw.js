@@ -97,9 +97,15 @@ function animation(canvas_width, canvas_height) {
     // SETTINGS ////////////////////////////////
     // how finely we pixelate the grid ////////
     //////////////////////////////////////////
+    /*
     var r = 5;
     var xsp = 5;
     var ysp = 5;
+    */
+    var r = 4;
+    var xsp = 2;
+    var ysp = 4;
+
     var dt = 20; // we only care about things at the granularity of 20ms
 
     var headers = ['x','y','i','j'];
@@ -117,6 +123,7 @@ function animation(canvas_width, canvas_height) {
     }
     var min_ij = grid_ij(0,0);
     var max_ij = grid_ij(canvas_width, canvas_height);
+    console.log('max i', max_ij[0], 'max j', max_ij[1]);
 
     // convert i,j to x,y
     function grid_xy(i,j) {
