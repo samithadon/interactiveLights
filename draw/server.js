@@ -14,7 +14,6 @@ var fromDraw = io.of('/draw');
 fromDraw.on('connection', function(client) {
     client.on('csvAnm', function(d) {
         console.log('got csvAnm event');
-        // TODO send to Processing
         toServers.emit('bdmsg', d);
     });
 });
