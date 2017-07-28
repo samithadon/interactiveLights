@@ -28,7 +28,7 @@ function CanvasManager(canvas_id, colorpicker_id) {
 
     function touch_handler(ev) {
         ev.preventDefault();                 
-        var x = ev.touches[0].clientX;
+        var x = ev.touches[0].clientX - canvas.offsetLeft;
         var y = ev.touches[0].clientY - canvas.offsetTop;
         var color = $('#' + colorpicker_id).val();
         var gridpoints = drawing.record_point(x, y, color);
@@ -37,7 +37,7 @@ function CanvasManager(canvas_id, colorpicker_id) {
 
     function mouse_handler(ev) {
         if (ev.which != 1) return;
-        var x = ev.clientX;
+        var x = ev.clientX - canvas.offsetLeft;
         var y = ev.clientY - canvas.offsetTop;
         var color = $('#' + colorpicker_id).val();
         var gridpoints = drawing.record_point(x, y, color);
@@ -70,7 +70,7 @@ function CanvasManager(canvas_id, colorpicker_id) {
         drawing = animation(canvas.width, canvas.height);
 
         context.fillStyle = "#ffffff";
-        context.rect(0, 0, 300, 300);
+        context.rect(0, 0, canvas.width, canvas.height);
         context.fill();
         var grid = drawing.get_grid();
         _.each(grid, function(p) {
@@ -97,14 +97,10 @@ function animation(canvas_width, canvas_height) {
     // SETTINGS ////////////////////////////////
     // how finely we pixelate the grid ////////
     //////////////////////////////////////////
-    /*
-    var r = 5;
-    var xsp = 5;
-    var ysp = 5;
-    */
     var r = 4;
     var xsp = 2;
     var ysp = 4;
+    var padding = 4;
 
     var dt = 20; // we only care about things at the granularity of 20ms
 
@@ -117,6 +113,8 @@ function animation(canvas_width, canvas_height) {
 
     // convert x,y to i,j
     function grid_ij(x,y) {
+        x = Math.max(x - padding, 0);
+        y = Math.max(y - padding, 0);
         var j = Math.floor(y / (ysp + 2*r));
         var i = j%2 ? Math.floor((x-xsp/2-r)/(xsp+2*r)) : Math.floor(x/(xsp+2*r));
         return [i,j];
@@ -129,6 +127,8 @@ function animation(canvas_width, canvas_height) {
     function grid_xy(i,j) {
         var x = i*(xsp + 2*r) + (j%2)*(xsp/2+r);
         var y = j*(ysp + 2*r);
+        x += padding;
+        y += padding;
         return [x,y];
     }
 
@@ -205,6 +205,7 @@ function animation(canvas_width, canvas_height) {
         });
 
         var xy = grid_xy(ij[0],ij[1]);
+
         return {x: xy[0], y: xy[1]};
     }
 
