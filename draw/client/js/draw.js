@@ -137,18 +137,6 @@ function animation(canvas_width, canvas_height) {
         return i*(max_ij[1] + 1) + j;
     }
 
-    // get all the times we have frames for
-    function get_all_frame_times() {
-        var times_as_strings = _.keys(a.frames);
-        var times_as_numbers = _.map(times_as_strings, function(t) {
-            return JSON.parse(t);
-        });
-        var times_sorted = _.sortBy(times_as_numbers, function(t) {
-            return t;
-        });
-        return times_sorted;
-    }
-
     ////////////////////////////////////////////////////////////////
     // INITIALIZATION /////////////////////////////////////////////
     //////////////////////////////////////////////////////////////
@@ -220,9 +208,7 @@ function animation(canvas_width, canvas_height) {
 
         // add the points to the new frame
         _.each(points, function(p) {
-            var i = p.i;
-            var j = p.j;
-            a.frames[JSON.stringify(T)][a_index(i,j)] = p.color;
+            a.frames[JSON.stringify(T)][a_index(p.i,p.j)] = p.color;
         });
     }, dt);
 
@@ -230,45 +216,50 @@ function animation(canvas_width, canvas_height) {
     // CLEANING UP THE FRAMES BEFORE SENDING OUT THE CSV /////////////////
     /////////////////////////////////////////////////////////////////////
 
-    function remove_empty_frames_from_beginning_and_end() {
-        var times = get_all_frame_times();
-
-        // a helper function for use below
-        // if the frame is empty (all 0's) returns true and sets the frame to null, else returns false
-        function is_empty_also_nullify_if_empty(ti) {
-            var t = JSON.stringify(times[ti]);
-            if (_.max(a.frames[t]) == 0) {
-                a.frames[t] = null;
-                return true;
-            } else {
-                return false;
+    // when the animation starts and ends
+    // ignoring empty frames at beginning and end
+    function frame_is_empty(frame) {
+        var empty = true;
+        for (var i = 0; i < frame.length; i++) {
+            if (frame[i] != 0) {
+                empty = false;
+                break;
             }
         }
+        return empty;
+    }
 
-        // from the beginning, set each frame to null if it contains all 0's
-        for (var ti = 0; ti < times.length; ti++) {
-            if(!is_empty_also_nullify_if_empty(times[ti])) {
-                break; // stop when we reach a nonempty frame
+    function get_nonempty_start_end_times() {
+        var all_times = _.keys(a.frames);
+        var all_times_as_numbers = _.map(all_times, function(t) {
+            return JSON.parse(t);
+        });
+        var all_times_sorted = _.sortBy(all_times_as_numbers, function(t) {
+            return t;
+        });
+
+        var res = {
+            // the time of the first nonempty frame
+            start: _.first(all_times_sorted),
+            // the time of the last nonempty frame
+            end: _.last(all_times_sorted),
+        };
+     
+        var found_start_time = false;
+        _.each(all_times_sorted, function(t) {
+            var empty = frame_is_empty(a.frames[JSON.stringify(t)]);
+            // first find the start time
+            if (!found_start_time && !empty) {
+                res.start = t;
+                found_start_time = true;
             }
-        }
-
-        // from the end, set each frame to null if it contains all 0's
-        for (var ti = times.length-1; ti >= 0; ti--) {
-            if(!is_empty_also_nullify_if_empty(times[ti])) {
-                break; // stop when we reach a nonempty frame
-            }
-        }
-
-        // just keep the nonempty frames, starting time at 0 again
-        var frames_copy = a.frames;
-        a.frames = {};
-        var t = 0;
-        _.each(frames_copy, function(frame) {
-            if (frame) {
-                a.frames[JSON.stringify(t)] = frame;
-                t += dt;
+            // then find the end time
+            else if (!empty) {
+                res.end = t;
             }
         });
+
+        return res;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -277,14 +268,15 @@ function animation(canvas_width, canvas_height) {
 
     // get the animation csv which is sent to processing
     function get_csv() {
-        remove_empty_frames_from_beginning_and_end();
+        var time_bounds = get_nonempty_start_end_times();
+        console.log('time_bounds', time_bounds);
+        var times = _.range(time_bounds.start, time_bounds.end+1, dt);
 
         var csv = '';
         var row = [];
 
         // first row of csv is the grid points x,y,i,j, then the times
-        row = row.concat(headers);
-        row = row.concat(get_all_frame_times());
+        row = headers.concat(_.range(0, time_bounds.end-time_bounds.start+1, dt));
         csv += row.join(',');
 
         // for each grid point
@@ -298,8 +290,8 @@ function animation(canvas_width, canvas_height) {
             });
 
             // record its changes over time
-            _.each(a.frames, function(frame) {
-                row.push(frame[index]);
+            _.each(times, function(t) {
+                row.push(a.frames[JSON.stringify(t)][index]);
             });
 
             // add this as a row to the csv
