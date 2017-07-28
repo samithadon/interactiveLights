@@ -24,12 +24,32 @@
         <canvas id="main" width="300" height="300"></canvas><br>
       </div>
       <div>
-        <button id="submit" type="button" class="btn btn-default">Send</button>
+        <button id="submit-drawing" type="button" class="btn btn-primary">
+          Send
+        </button>
       </div>
     </div>
 
     <div id="feedback-page" class="hide">
-      <p>Please tell us about your experience...</p>
+      <div class="form-group">
+        <label for="feedback-describe">
+          Nice drawing! What prompted you to draw what you did?
+        </label>
+        <textarea id="feedback-describe" class="form-control" rows="5"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="feedback-location">Where are you right now?</label>
+        <select id="feedback-location" class="form-control">
+          <option>Augmented Human Lab</option>
+          <option>Dares Lab</option>
+          <option>Elsewhere on campus</option>
+          <option>At home</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <button id="submit-feedback" class="btn btn-primary">
+        Send
+      </button>
     </div>
 
     <!-- external js libraries -->

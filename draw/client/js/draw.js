@@ -329,13 +329,15 @@ window.onload = function() {
 
     var messageInput = document.getElementById('message');
    
-    function clear() {
+    // HOOK UP EVENT LISTENERS
+
+    (new Hammer(document.getElementById('clear'))).on('tap', function() {
         //canvMgr.clear();
         location.reload();
         // TODO canvMgr.clear() for some reason does not really clear out the animation.... not sure why!! do not want to spend any more time debugging it given the current project timeline. so just reloading the whole page as a workaround... 
-    }
+    });
 
-    function submit() {
+    (new Hammer(document.getElementById('submit-drawing'))).on('tap', function() {
         var csv = canvMgr.get_csv();
         var data = { message: 'empty message', csv:csv };
         console.log('socket emitting csvAnm with data', data);
@@ -344,14 +346,12 @@ window.onload = function() {
         });
         $('#drawing-page').addClass('hide');
         $('#feedback-page').removeClass('hide');
-    }   
+    });
 
-    // HOOK UP EVENT LISTENERS
-
-    var h_clear = new Hammer(document.getElementById('clear'));
-    h_clear.on('tap', clear);
-
-    var h_submit = new Hammer(document.getElementById('submit'));
-    h_submit.on('tap', submit);
+    (new Hammer(document.getElementById('submit-feedback'))).on('tap', function () {
+        var user_description = $('#feedback-describe').val();
+        var user_location = $('#feedback-location').val();
+        console.log('got user description', user_description, 'user_location', user_location); 
+    });
 }
 
