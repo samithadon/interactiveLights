@@ -48,7 +48,7 @@ toServers.on('connection', function(client) {
     console.log('toServers connection with Processing');
 });
 
-server.listen(3000);
+server.listen(process.env.PORT || 5000);
 
 function get_user_record_name() {
     var d = new Date();
