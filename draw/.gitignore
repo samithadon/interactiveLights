@@ -1,3 +1,6 @@
 node_modules*
 user_data/animations/*
 user_data/feedback/*
+npm-debug.log
+.DS_Store
+/*.env
