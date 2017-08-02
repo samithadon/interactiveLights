@@ -2,6 +2,9 @@
   "name": "webapp_for_sutd_guestbook_memory_wall",
   "version": "0.0.0",
   "description": "Webapp for SUTD Guestbook Memory Wall",
+  "engines": {
+    "node": "4.2.3"
+  },
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
