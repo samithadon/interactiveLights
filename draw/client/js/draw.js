@@ -102,6 +102,10 @@ function animation(canvas_width, canvas_height) {
     var ysp = 4;
     var padding = 4;
 
+    var min_ij = [0, 0];
+    var max_ij = [29, 23];
+
+
     var dt = 20; // we only care about things at the granularity of 20ms
 
     var headers = ['x','y','i','j'];
@@ -116,16 +120,15 @@ function animation(canvas_width, canvas_height) {
         x = Math.max(x - padding, 0);
         y = Math.max(y - padding, 0);
         var j = Math.floor(y / (ysp + 2*r));
-        var i = j%2 ? Math.floor((x-xsp/2-r)/(xsp+2*r)) : Math.floor(x/(xsp+2*r));
+        j = Math.max(0, j);
+        var i = Math.floor((x - ((j+1)%2)*(xsp/2+r)) / (xsp+2*r));
+        i = Math.max(0, i);
         return [i,j];
     }
-    var min_ij = grid_ij(0,0);
-    var max_ij = grid_ij(canvas_width, canvas_height);
-    console.log('max i', max_ij[0], 'max j', max_ij[1]);
 
     // convert i,j to x,y
     function grid_xy(i,j) {
-        var x = i*(xsp + 2*r) + (j%2)*(xsp/2+r);
+        var x = i*(xsp + 2*r) + ((j+1)%2)*(xsp/2+r);
         var y = j*(ysp + 2*r);
         x += padding;
         y += padding;
