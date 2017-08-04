@@ -120,9 +120,11 @@ function animation(canvas_width, canvas_height) {
         x = Math.max(x - padding, 0);
         y = Math.max(y - padding, 0);
         var j = Math.floor(y / (ysp + 2*r));
-        j = Math.max(0, j);
+        j = Math.max(min_ij[1], j);
+        j = Math.min(max_ij[1], j);
         var i = Math.floor((x - ((j+1)%2)*(xsp/2+r)) / (xsp+2*r));
-        i = Math.max(0, i);
+        i = Math.max(min_ij[0], i);
+        i = Math.min(max_ij[0], i);
         return [i,j];
     }
 
@@ -188,6 +190,7 @@ function animation(canvas_width, canvas_height) {
         // x,y are the x,y from the canvas event. not aligned to grid yet
         // get the closest i,j grid point for x,y
         var ij = grid_ij(x,y);
+        console.log('recording point i', ij[0], 'j', ij[1]);
 
         points_to_add.push({
             i: ij[0],
