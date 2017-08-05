@@ -346,23 +346,23 @@ window.onload = function() {
 
     // when the user taps the submit-drawing button
     (new Hammer(document.getElementById('submit-drawing'))).on('tap', function() {
-        var csv = canvMgr.get_csv();
-        var data = { message: 'empty message', csv:csv };
-        console.log('socket emitting csvAnm with data', data);
-        socket.emit("csvAnm",data, function(d) {
-            console.log('got socket reply back', d);
-        });
+        window.my_user_data = {};
+        window.my_user_data.csv = canvMgr.get_csv();
+
         $('#drawing-page').addClass('hide');
         $('#feedback-page').removeClass('hide');
     });
 
     // when the user taps the submit-feedback button
     (new Hammer(document.getElementById('submit-feedback'))).on('tap', function () {
-        var user_description = $('#feedback-describe').val();
-        var user_location = $('#feedback-location').val();
-        var data = {description: user_description, place: user_location};
-        console.log('socket emitting feedback event with data', data);
-        socket.emit("feedback", data, function(d) {
+        window.my_user_data.user_description = $('#feedback-describe').val();
+        window.my_user_data.user_location = $('#feedback-location').val();
+        var d = new Date();
+        window.my_user_data.timestamp = d.toString() + ' ' + d.getMilliseconds() + 'ms';
+
+        console.log('socket emitting csvAnm with data', window.my_user_data);
+
+        socket.emit("csvAnm", window.my_user_data, function(d) {
             console.log('got socket reply back', d);
         });
         location.reload();
