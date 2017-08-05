@@ -358,7 +358,7 @@ window.onload = function() {
         window.my_user_data.user_description = $('#feedback-describe').val();
         window.my_user_data.user_location = $('#feedback-location').val();
         var d = new Date();
-        window.my_user_data.timestamp = d.toString() + ' ' + d.getMilliseconds() + 'ms';
+        window.my_user_data.timestamp = d.getUTCFullYear() + " " + (d.getMonth()+1) + " " + d.getDay() + " " + d.getHours() + "h" + d.getMinutes() + "m " + d.getSeconds() + "s" + d.getMilliseconds() + "ms";
 
         console.log('socket emitting csvAnm with data', window.my_user_data);
 
