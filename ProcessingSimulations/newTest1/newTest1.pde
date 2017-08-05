@@ -1,4 +1,4 @@
-import CK.*;
+ import CK.*;
 import java.awt.Color;
 import processing.serial.*;
 P5_KiNET PDS;
@@ -77,7 +77,7 @@ int lastSensrX = 0, lastSensrY = 0;
 int countWave=0;
 
 
-String[] ipPDSs = {"10.0.39.108","10.0.39.109","10.0.39.110"};
+String[] ipPDSs = {"10.0.39.107","10.0.39.108","10.0.39.109"};
 int[] pdsCap = { 8,8,8};
 // String ipPDS2 = "10.3.100.101";
 
@@ -693,15 +693,16 @@ class Animation {
        int m = row.getInt("i");
        int n = row.getInt("j");
       //println(i);
-      String numberA = String.valueOf(i*100);
+      String numberA = String.valueOf(i*20); //*100
      //int value=0;
       //println(i);
       //if(i*100 < columns){
-        test = i*100;
-       if (test>((columns-5)*20)){
-         numberA = String.valueOf((columns-5)*20);
-         break;
-       }
+        //test = i*100;
+       //test =i;
+       //if (test>((columns-5)*20)){
+         //numberA = String.valueOf((columns-5)*20);
+         //break;
+       //}
         
         //if (test <rows){
       String hexValue = row.getString(numberA);
@@ -719,12 +720,12 @@ class Animation {
         //}else{
           //ellipse(x+shift,y,5,5);
           if(m+shift < 30 && n+shift < 30 && m+shift > 0 && n+shift >0 ){
-              l.lights[m+shift][n+shift].intensity = 1.0;
-              l.lights[m+shift][n+shift].addrgbColor(r,g,b, 1.0);
+              l.lights[m+shift][n+shift].intensity = 0.5 ;
+              l.lights[m+shift][n+shift].addrgbColor(r,g,b, 0.5);
           }else{
              
-                l.lights[m][n].intensity =1.0;
-              l.lights[m][n].addrgbColor(r,g,b, 1.0);
+                l.lights[m][n].intensity =0.5;
+              l.lights[m][n].addrgbColor(r,g,b, 0.5);
             
           }
         //}
@@ -736,12 +737,12 @@ class Animation {
         //if(value==0){
         //ellipse(x,y,5,5);
          if(m+shift < 30 && n+shift < 30 && m+shift > 0 && n+shift >0 ){
-         l.lights[m+shift][n+shift].intensity = random(0.4);
-           l.lights[m+shift][n+shift].addRGBColor(false, 1.0);
+         //l.lights[m+shift][n+shift].intensity = random(0.4);
+          // l.lights[m+shift][n+shift].addRGBColor(false, 1.0);
          }else{
             
-             l.lights[m][n].intensity = random(0.4) ;
-              l.lights[m][n].addRGBColor(false, 1.0);
+            // l.lights[m][n].intensity = random(0.4) ;
+            //  l.lights[m][n].addRGBColor(false, 1.0);
             
          }
         //}else{

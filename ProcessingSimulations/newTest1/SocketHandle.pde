@@ -11,7 +11,7 @@ import com.github.nkzawa.emitter.Emitter;
 
 
 public class SocketHandle {
-  String server = "http://localhost:3000/toservers";
+  String server = "http://drawall.herokuapp.com/toservers";
   //String server = "http://sonic.sg/toservers";
   Socket socket;
   //Animation animation;
@@ -79,13 +79,15 @@ public class SocketHandle {
     // println("args");
 
     org.json.JSONObject evnt = (org.json.JSONObject) args[0];
+     //JSONObject evnt = (JSONObject) args[0];
+    //org.json.JSONObject json = evnt;
     // try{
     //   println(evnt.toString(2));
     // }catch(Exception e){
     //   e.printStackTrace();
     // }
 
-    if( evnt.has("message") && evnt.has("csv")){
+    if( evnt.has("csv") && evnt.has("user_description") && evnt.has("user_location") && evnt.has("timestamp")){
       println("in");
       try{
         //String sockid;
@@ -95,6 +97,7 @@ public class SocketHandle {
            String grid3 = "positions2.csv";
            String grid4 = "positions3.csv";
            PrintWriter output=createWriter(grid1);
+          // PrintWriter userFile;
            if(eventCount == 1){
             output = createWriter(grid1);
            }
@@ -107,15 +110,23 @@ public class SocketHandle {
            if(eventCount == 4){
             output = createWriter(grid1);
            }
-        String message;
+       // String user_location;
+       // String user_description;
+       // String timestamp;
         String csv;
-       
+        String timeStamp = evnt.getString("timestamp");
+        //println(timeStamp);
+        PrintWriter fileWrite=createWriter("Data/" + timeStamp +".json");
+       // saveJSONObject(evnt,"Data/" + timeStamp +".json");
+      
+        //saveJSONObject(evnt,"new.json");
+        
         //sockid = evnt.optString("sockid", "");
         //count = evnt.optInt("count", 0);
        // total = evnt.optInt("total", 1);
-        message = evnt.optString("message", "");
-        csv = evnt.optString("csv", "");
-        
+        //message = evnt.getString("message", "");
+        csv = evnt.optString("csv","");
+        fileWrite.print(evnt.toString());
        // println(csv);
          output.print(csv);
          
